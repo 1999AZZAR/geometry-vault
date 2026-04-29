@@ -3,8 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Glass Gallery: Digital archive and technical portfolio of Azzar Budiyanto. A high-end specimen vault for archival synthesis.">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <link rel="canonical" href="https://geometry-vault.glassgallery.my.id/">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self' blob:; script-src 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: blob:;">
-    <title>Specimen Vault | Archival Synthesis</title>
+    <title>Geometry Vault: Digital Archive and Technical Portfolio</title>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://glassgallery.my.id/porto/#person",
+          "name": "Azzar Budiyanto",
+          "jobTitle": "Lead Architect",
+          "sameAs": [
+            "https://github.com/Mema",
+            "https://linkedin.com/in/azzar",
+            "https://glassgallery.my.id/porto/"
+          ]
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://glassgallery.my.id/#organization",
+          "name": "Geometry Vault",
+          "founder": {
+            "@id": "https://glassgallery.my.id/porto/#person"
+          },
+          "url": "https://glassgallery.my.id/"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://geometry-vault.glassgallery.my.id/#website",
+          "url": "https://geometry-vault.glassgallery.my.id/",
+          "name": "Geometry Vault | Archival Synthesis",
+          "description": "Digital archive and technical portfolio of Azzar Budiyanto.",
+          "publisher": {
+            "@id": "https://glassgallery.my.id/#organization"
+          },
+          "author": {
+            "@id": "https://glassgallery.my.id/porto/#person"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is the Glass Gallery Specimen Vault?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The Glass Gallery Specimen Vault is a digital synthesis engine designed for technical minimalism and structural honesty, allowing for the generation of procedural geometry specimens based on narrative sequences."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does the procedural geometry logic work?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The engine hashes narrative inputs to determine core symmetry, layer depth, and orbital complexity, ensuring each specimen is a unique archival record."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -115,6 +180,37 @@
         @media print {
             .custom-cursor, .custom-cursor-trail { display: none !important; }
         }
+
+        /* Embed Mode */
+        body[data-mode="embed"] { 
+            background: transparent; 
+            padding: 0; 
+            display: block;
+            overflow: hidden;
+        }
+        body[data-mode="embed"] main { 
+            max-width: none; 
+            width: 100vw; 
+            height: 100vh; 
+            margin: 0; 
+            display: block;
+            gap: 0;
+            space-y: 0;
+        }
+        body[data-mode="embed"] .noise-layer,
+        body[data-mode="embed"] section,
+        body[data-mode="embed"] #specimen-metadata { 
+            display: none !important; 
+        }
+        body[data-mode="embed"] #render-target { 
+            border: none; 
+            box-shadow: none; 
+            background: transparent; 
+            height: 100%; 
+            width: 100%;
+            padding: 0;
+        }
+        body[data-mode="embed"] #render-target .absolute { display: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
@@ -188,8 +284,30 @@
                     <button id="png-btn" class="font-tech text-[10px] text-[#2A2520] hover:text-[#8B1A1A] transition-all flex items-center justify-center gap-2 px-4 py-2 border border-[#DDD5C5] hover:border-[#8B1A1A] bg-[#E8E0D0] w-1/2">
                         <i class="fa-solid fa-download"></i> [ PNG ]
                     </button>
-                </div>
-            </footer>
+                    </div>
+                    <button id="embed-btn" class="font-tech text-[10px] text-[#7A7068] hover:text-[#8B1A1A] transition-all flex items-center justify-center gap-2 px-4 py-2 border border-[#DDD5C5] hover:border-[#8B1A1A] bg-[#E8E0D0] w-full">
+                    <i class="fa-solid fa-share-nodes"></i> [ GENERATE EMBED ]
+                    </button>
+                    </footer>        </section>
+
+        <!-- Archival Metadata Section for SEO/AIO -->
+        <section class="md:col-span-5 surface-card p-8 rounded-sm space-y-8 mt-6">
+            <div class="prose max-w-none">
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A]">01. ARCHIVAL_SYNTHESIS_OVERVIEW</h2>
+                <p class="text-sm text-[#2A2520] leading-relaxed">
+                    The Glass Gallery Specimen Vault is a digital synthesis engine designed for technical minimalism and structural honesty. It allows architects and designers to generate procedural geometry specimens based on narrative sequences, facilitating a physical-digital bridge for archival preservation.
+                </p>
+
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A] mt-8">02. PROCEDURAL_GEOMETRY_LOGIC</h2>
+                <p class="text-sm text-[#2A2520] leading-relaxed">
+                    By injecting narrative sequences into the matrix, the engine hashes the input to determine core symmetry, layer depth, and orbital complexity. This ensures every specimen is a unique archival record, traceable via its sequence identifier (SEQ-ID) and ptr-hash metric.
+                </p>
+
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A] mt-8">03. ARCHIVAL_EXPORT_PROTOCOL</h2>
+                <p class="text-sm text-[#2A2520] leading-relaxed">
+                    Specimens can be exported as high-resolution SVG or PNG files, adhering to the Swiss-Archival design system. The system employs a persistent organic grain and a blueprint grid foundation to mimic 300gsm matte-printed archival paper, ensuring visual consistency across digital and physical mediums.
+                </p>
+            </div>
         </section>
     </main>
 
@@ -202,6 +320,7 @@
             specimenId: document.getElementById('specimen-id'),
             copyBtn: document.getElementById('copy-btn'),
             pngBtn: document.getElementById('png-btn'),
+            embedBtn: document.getElementById('embed-btn'),
             ratioBtns: document.querySelectorAll('.ratio-btn')
         };
 
@@ -320,6 +439,58 @@
             };
         };
 
+        const initServiceLogic = () => {
+            const params = new URLSearchParams(window.location.search);
+            
+            if (params.get('mode') === 'embed') {
+                document.body.dataset.mode = 'embed';
+            }
+
+            if (params.get('seed')) DOM.seedInput.value = params.get('seed');
+            if (params.get('colors')) DOM.colorInput.value = params.get('colors');
+            
+            if (params.get('w') && params.get('h')) {
+                DOM.ratioBtns.forEach(btn => {
+                    if (btn.dataset.w === params.get('w') && btn.dataset.h === params.get('h')) {
+                        DOM.ratioBtns.forEach(b => b.removeAttribute('data-active'));
+                        btn.setAttribute('data-active', 'true');
+                    }
+                });
+            }
+
+            // postMessage interface
+            window.addEventListener('message', (e) => {
+                const { type, data } = e.data;
+                if (type === 'UPDATE_SPECIMEN') {
+                    if (data.seed) DOM.seedInput.value = data.seed;
+                    if (data.colors) DOM.colorInput.value = data.colors;
+                    if (data.w && data.h) {
+                        DOM.ratioBtns.forEach(btn => {
+                            if (btn.dataset.w == data.w && btn.dataset.h == data.h) {
+                                DOM.ratioBtns.forEach(b => b.removeAttribute('data-active'));
+                                btn.setAttribute('data-active', 'true');
+                            }
+                        });
+                    }
+                    renderSynthesisPipeline();
+                }
+            });
+        };
+
+        const handleEmbedExport = async () => {
+            const ratio = getActiveRatio();
+            const baseUrl = window.location.origin + window.location.pathname;
+            const embedUrl = `${baseUrl}?mode=embed&seed=${encodeURIComponent(DOM.seedInput.value)}&colors=${encodeURIComponent(DOM.colorInput.value)}&w=${ratio.w}&h=${ratio.h}`;
+            const iframeCode = `<iframe src="${embedUrl}" width="500" height="500" frameborder="0" style="border:1px solid #DDD5C5; border-radius:4px;"></iframe>`;
+            
+            try {
+                await navigator.clipboard.writeText(iframeCode);
+                buttonFeedback(DOM.embedBtn, DOM.embedBtn.innerHTML, '<i class="fa-solid fa-check"></i> [ EMBED_CODE_COPIED ]');
+            } catch (err) {
+                console.error('Embed export failed', err);
+            }
+        };
+
         const renderSynthesisPipeline = () => {
             const rawSeed = DOM.seedInput.value || "Archival Initial Data";
             const rawPalette = DOM.colorInput.value;
@@ -364,6 +535,16 @@
 
             DOM.hashMetric.textContent = `PTR: 0x${hash.toString(16).toUpperCase().padStart(8, '0')}`;
             DOM.specimenId.textContent = `SEQ: ${identifier}`;
+
+            // Sync URL if not in embed mode
+            if (document.body.dataset.mode !== 'embed') {
+                const url = new URL(window.location);
+                url.searchParams.set('seed', rawSeed);
+                url.searchParams.set('colors', rawPalette);
+                url.searchParams.set('w', ratio.w);
+                url.searchParams.set('h', ratio.h);
+                window.history.replaceState({}, '', url);
+            }
         };
 
         const createDebouncer = (callback, delay) => {
@@ -459,8 +640,10 @@
         DOM.colorInput.addEventListener('input', renderDebounced);
         DOM.copyBtn.addEventListener('click', handleSVGExport);
         DOM.pngBtn.addEventListener('click', handlePNGExport);
+        DOM.embedBtn.addEventListener('click', handleEmbedExport);
         
         window.addEventListener('DOMContentLoaded', () => {
+            initServiceLogic();
             renderSynthesisPipeline();
             initCustomCursor();
         });
