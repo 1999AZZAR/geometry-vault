@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self' blob:; script-src 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: blob:;">
+    <title>Specimen Vault | Archival Synthesis</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --archival-bg: #E8E0D0;
+            --archival-fg: #2A2520;
+            --archival-surface: #EFE9DC;
+            --archival-accent: #8B1A1A;
+            --archival-muted: #DDD5C5;
+            --archival-meta: #7A7068;
+            --grid-color: rgba(191, 182, 166, 0.2);
+        }
+
+        ::selection { background: var(--archival-accent); color: var(--archival-surface); }
+
+        body { 
+            background-color: var(--archival-bg); 
+            background-image: linear-gradient(to right, var(--grid-color) 1px, transparent 1px);
+            background-size: 10% 100%;
+            color: var(--archival-fg); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .noise-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.04;
+            mix-blend-mode: multiply;
+        }
+
+        .font-tech { 
+            font-family: 'JetBrains Mono', monospace; 
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .surface-card { 
+            background: var(--archival-surface); 
+            border: 1px solid var(--archival-muted); 
+            box-shadow: 0 4px 24px -12px rgba(42, 37, 32, 0.08);
+        }
+
+        input {
+            background: var(--archival-bg);
+            border: 1px solid var(--archival-muted);
+            color: var(--archival-fg);
+            transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        input:focus { 
+            outline: none; 
+            border-color: var(--archival-accent); 
+        }
+
+        .specimen-svg { 
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        /* Matrix Control Styling */
+        .ratio-btn {
+            border: 1px solid var(--archival-muted);
+            transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .ratio-btn:hover { border-color: var(--archival-accent); color: var(--archival-accent); }
+        .ratio-btn[data-active="true"] {
+            background: var(--archival-accent);
+            color: var(--archival-surface);
+            border-color: var(--archival-accent);
+        }
+
+        /* Custom Cursor */
+        @media (pointer: fine) {
+            * { cursor: none !important; }
+            .custom-cursor, .custom-cursor-trail {
+                position: fixed;
+                top: 0; left: 0;
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                transform: translate3d(calc(var(--x, -100px) - 50%), calc(var(--y, -100px) - 50%), 0) scale(var(--scale, 1));
+            }
+            .custom-cursor {
+                width: 6px; height: 6px;
+                background-color: var(--archival-accent);
+                transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1);
+            }
+            .custom-cursor-trail {
+                width: 28px; height: 28px;
+                border: 1px solid var(--archival-accent);
+                z-index: 9998;
+                transition: transform 0.05s linear, background-color 0.2s, border-color 0.2s;
+            }
+            .custom-cursor.hover { --scale: 1.5; }
+            .custom-cursor-trail.hover { --scale: 1.5; background-color: rgba(139, 26, 26, 0.1); }
+        }
+        @media print {
+            .custom-cursor, .custom-cursor-trail { display: none !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
+
+    <svg class="noise-layer" aria-hidden="true">
+        <filter id="fractalNoise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#fractalNoise)"/>
+    </svg>
+
+    <main class="max-w-[80rem] w-full max-w-[48rem] space-y-6 relative z-10 grid grid-cols-1 md:grid-cols-5 gap-6">
+        
+        <div id="render-target" class="surface-card w-full aspect-square md:aspect-auto md:h-full md:col-span-3 rounded-sm p-8 flex items-center justify-center overflow-hidden relative">
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTIyLCAxMTIsIDEwNCwgMC4xKSIvPjwvc3ZnPg==')] opacity-80 pointer-events-none"></div>
+        </div>
+
+        <section class="surface-card p-6 rounded-sm space-y-6 md:col-span-2 flex flex-col justify-between">
+            <div class="space-y-6">
+                <header class="flex items-center justify-between border-b border-[#DDD5C5] pb-4">
+                    <h1 class="font-tech text-[11px] font-semibold text-[#2A2520] flex items-center gap-2">
+                        <i class="fa-solid fa-cube text-xs"></i> Synthesis Engine
+                    </h1>
+                </header>
+
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="font-tech text-[9px] text-[#7A7068]">FORMAT_MATRIX</label>
+                        <div class="grid grid-cols-3 gap-2" id="format-matrix">
+                            <button class="ratio-btn py-2 text-[10px] font-tech font-semibold bg-[#E8E0D0]" data-w="9" data-h="16">9:16</button>
+                            <button class="ratio-btn py-2 text-[10px] font-tech font-semibold bg-[#E8E0D0]" data-w="2" data-h="3">2:3</button>
+                            <button class="ratio-btn py-2 text-[10px] font-tech font-semibold bg-[#E8E0D0]" data-w="3" data-h="4">3:4</button>
+                            
+                            <button class="ratio-btn py-2 text-[10px] font-tech font-semibold bg-[#E8E0D0]" data-w="4" data-h="5">4:5</button>
+                            <button class="ratio-btn py-2 text-[10px] font-tech font-semibold bg-[#E8E0D0]" data-w="1" data-h="1" data-active="true">1:1</button>
+                            <button class="ratio-btn py-2 text-[10px] font-tech font-semibold bg-[#E8E0D0]" data-w="5" data-h="4">5:4</button>
+                            
+                            <button class="ratio-btn py-2 text-[10px] font-tech font-semibold bg-[#E8E0D0]" data-w="4" data-h="3">4:3</button>
+                            <button class="ratio-btn py-2 text-[10px] font-tech font-semibold bg-[#E8E0D0]" data-w="3" data-h="2">3:2</button>
+                            <button class="ratio-btn py-2 text-[10px] font-tech font-semibold bg-[#E8E0D0]" data-w="16" data-h="9">16:9</button>
+                        </div>
+                    </div>
+
+                    <div class="relative group pt-2">
+                        <i class="fa-solid fa-terminal absolute left-4 top-1/2 -translate-y-1/2 text-[#7A7068] group-focus-within:text-[#8B1A1A] transition-colors mt-1"></i>
+                        <input type="text" id="seed-input" placeholder="Inject narrative sequence..." 
+                               class="w-full pl-10 pr-4 py-3 text-sm font-medium"
+                               autocomplete="off" maxlength="128" spellcheck="false">
+                    </div>
+
+                    <div class="relative group">
+                        <i class="fa-solid fa-palette absolute left-4 top-1/2 -translate-y-1/2 text-[#7A7068] group-focus-within:text-[#8B1A1A] transition-colors"></i>
+                        <input type="text" id="color-input" placeholder="Hex Palette..." 
+                               class="w-full pl-10 pr-4 py-3 text-sm font-medium"
+                               autocomplete="off" spellcheck="false"
+                               value="#8B1A1A, #2A2520, #7A7068, #E8E0D0">
+                    </div>
+                </div>
+            </div>
+
+            <footer class="space-y-4 pt-4 border-t border-[#DDD5C5]">
+                <div class="flex justify-between items-center bg-[#E8E0D0] px-3 py-2 border border-[#DDD5C5]">
+                    <span id="specimen-id" class="font-tech text-[10px] text-[#2A2520] font-semibold">SEQ: 00-000000</span>
+                    <span id="hash-metric" class="font-tech text-[9px] text-[#7A7068]">AWAITING...</span>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button id="copy-btn" class="font-tech text-[10px] text-[#2A2520] hover:text-[#8B1A1A] transition-all flex items-center justify-center gap-2 px-4 py-2 border border-[#DDD5C5] hover:border-[#8B1A1A] bg-[#E8E0D0] w-1/2">
+                        <i class="fa-solid fa-code"></i> [ SVG ]
+                    </button>
+                    <button id="png-btn" class="font-tech text-[10px] text-[#2A2520] hover:text-[#8B1A1A] transition-all flex items-center justify-center gap-2 px-4 py-2 border border-[#DDD5C5] hover:border-[#8B1A1A] bg-[#E8E0D0] w-1/2">
+                        <i class="fa-solid fa-download"></i> [ PNG ]
+                    </button>
+                </div>
+            </footer>
+        </section>
+    </main>
+
+    <script>
+        const DOM = {
+            target: document.getElementById('render-target'),
+            seedInput: document.getElementById('seed-input'),
+            colorInput: document.getElementById('color-input'),
+            hashMetric: document.getElementById('hash-metric'),
+            specimenId: document.getElementById('specimen-id'),
+            copyBtn: document.getElementById('copy-btn'),
+            pngBtn: document.getElementById('png-btn'),
+            ratioBtns: document.querySelectorAll('.ratio-btn')
+        };
+
+        const CONFIG = {
+            baseResolution: 240, 
+            baseExportScale: 2400, // Longest edge will be 2400px
+            maxLayers: 7,
+            archivalPalette: ['#8B1A1A', '#2A2520', '#7A7068', '#5A5048']
+        };
+
+        const sanitizePalette = (inputString) => {
+            const rawColors = inputString.split(',');
+            const validColors = [];
+            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+            
+            for (const color of rawColors) {
+                const trimmed = color.trim();
+                if (hexRegex.test(trimmed)) validColors.push(trimmed);
+            }
+            return validColors.length > 0 ? validColors : CONFIG.archivalPalette;
+        };
+
+        const generateSecureHash = (inputString) => {
+            const sanitizedString = inputString.replace(/[^a-zA-Z0-9\s-_.,]/g, '').trim();
+            let hashValue = 0x811c9dc5; 
+            for (let i = 0; i < sanitizedString.length; i++) {
+                hashValue ^= sanitizedString.charCodeAt(i);
+                hashValue = Math.imul(hashValue, 0x01000193);
+            }
+            return Math.abs(hashValue);
+        };
+
+        const generateSequenceIdentifier = (hash) => {
+            const dictionary = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            const prefix = (hash % 89) + 10;
+            let suffix = "";
+            let mutableHash = hash;
+            for (let i = 0; i < 6; i++) {
+                suffix += dictionary.charAt(mutableHash % dictionary.length);
+                mutableHash = Math.floor(mutableHash / dictionary.length);
+            }
+            return `${prefix}-${suffix}`;
+        };
+
+        const buildGeometryPath = (cx, cy, scale, params, modFreq = 0, modAmp = 0) => {
+            const [m, n1, n2, n3] = params;
+            const m_div_4 = m / 4;
+            const inv_n1 = -1 / n1;
+            const step = (Math.PI * 2) / CONFIG.baseResolution;
+            let d = "M ";
+            
+            for (let i = 0; i <= CONFIG.baseResolution; i++) {
+                const theta = i * step;
+                const m_theta_div_4 = m_div_4 * theta;
+                const term1 = Math.pow(Math.abs(Math.cos(m_theta_div_4)), n2);
+                const term2 = Math.pow(Math.abs(Math.sin(m_theta_div_4)), n3);
+                let radius = Math.pow(term1 + term2, inv_n1);
+                
+                if (modFreq > 0) radius += Math.sin(theta * modFreq) * modAmp;
+                
+                const x = Math.round((cx + radius * scale * Math.cos(theta)) * 100) / 100;
+                const y = Math.round((cy + radius * scale * Math.sin(theta)) * 100) / 100;
+                d += `${x},${y}${i < CONFIG.baseResolution ? ' L ' : ''}`;
+            }
+            return d + " Z";
+        };
+
+        const synthesizeGeometry = (hash, currentPalette, cx, cy, viewScale) => {
+            let svgMarkup = "";
+            const coreSymmetry = (hash % 8) + 2;
+            const coreParams = [(hash % 30) / 10 + 0.5, (hash % 40) / 10 + 0.2, ((hash >> 2) % 40) / 10 + 0.2];
+            const subSymmetry = ((hash >> 4) % 12) + 3;
+            const subParams = [1.2, 0.8, 1.2];
+
+            // Normalize internal radiuses against the shortest edge of the canvas
+            const scaleMultiplier = viewScale / 100;
+
+            for (let layer = 1; layer <= CONFIG.maxLayers; layer++) {
+                const layerScale = (layer / CONFIG.maxLayers) * 36 * scaleMultiplier;
+                const rotationAngle = (hash % 360) + (layer * 22.5);
+                const strokeWidth = Math.max(0.08, 0.25 - (layer * 0.02));
+                const strokeColor = currentPalette[layer % currentPalette.length];
+                
+                const pathA = buildGeometryPath(cx, cy, layerScale, [coreSymmetry, ...coreParams]);
+                svgMarkup += `<path d="${pathA}" fill="none" stroke="${strokeColor}" stroke-width="${strokeWidth}" transform="rotate(${rotationAngle} ${cx} ${cy})" />`;
+                
+                if (layer % 2 === 0) {
+                    const modFreq = (hash % 6) + 2;
+                    const modAmp = 0.05 * layer;
+                    const secondaryColor = currentPalette[(layer + 1) % currentPalette.length];
+                    const pathB = buildGeometryPath(cx, cy, layerScale * 0.75, [subSymmetry, ...subParams], modFreq, modAmp);
+                    svgMarkup += `<path d="${pathB}" fill="none" stroke="${secondaryColor}" stroke-width="${strokeWidth * 0.8}" transform="rotate(${-rotationAngle * 1.5} ${cx} ${cy})" stroke-dasharray="0.3 0.6" />`;
+                }
+            }
+
+            const orbitCount = (hash % 4) + 2;
+            for (let orbit = 0; orbit < orbitCount; orbit++) {
+                const angle = (orbit * (360 / orbitCount)) + (hash % 90);
+                const rad = angle * Math.PI / 180;
+                const radiusDist = (20 + (hash % 15)) * scaleMultiplier;
+                const ox = Math.round((cx + radiusDist * Math.cos(rad)) * 100) / 100;
+                const oy = Math.round((cy + radiusDist * Math.sin(rad)) * 100) / 100;
+                
+                svgMarkup += `<circle cx="${ox}" cy="${oy}" r="1.2" fill="none" stroke="${currentPalette[0]}" stroke-width="0.15" />`;
+                svgMarkup += `<line x1="${cx}" y1="${cy}" x2="${ox}" y2="${oy}" stroke="${currentPalette[2]}" stroke-width="0.05" stroke-dasharray="0.2 0.8" />`;
+            }
+
+            return svgMarkup;
+        };
+
+        const getActiveRatio = () => {
+            const activeBtn = document.querySelector('.ratio-btn[data-active="true"]');
+            return {
+                w: parseFloat(activeBtn.dataset.w),
+                h: parseFloat(activeBtn.dataset.h)
+            };
+        };
+
+        const renderSynthesisPipeline = () => {
+            const rawSeed = DOM.seedInput.value || "Archival Initial Data";
+            const rawPalette = DOM.colorInput.value;
+            const hash = generateSecureHash(rawSeed);
+            const identifier = generateSequenceIdentifier(hash);
+            const activePalette = sanitizePalette(rawPalette);
+            
+            // Layout Calculations based on Aspect Ratio
+            const ratio = getActiveRatio();
+            let viewW = 100;
+            let viewH = 100;
+            
+            if (ratio.w > ratio.h) {
+                viewH = Math.round((100 * (ratio.h / ratio.w)) * 100) / 100;
+            } else if (ratio.h > ratio.w) {
+                viewW = Math.round((100 * (ratio.w / ratio.h)) * 100) / 100;
+            }
+
+            const cx = Math.round((viewW / 2) * 100) / 100;
+            const cy = Math.round((viewH / 2) * 100) / 100;
+            const minDim = Math.min(viewW, viewH);
+
+            const coreSymmetry = (hash % 8) + 2;
+            const geometryMarkup = synthesizeGeometry(hash, activePalette, cx, cy, minDim);
+
+            DOM.target.innerHTML = `
+                <svg viewBox="0 0 ${viewW} ${viewH}" style="aspect-ratio: ${ratio.w}/${ratio.h};" xmlns="http://www.w3.org/2000/svg" class="specimen-svg w-full h-full">
+                    <rect width="${viewW}" height="${viewH}" fill="transparent"></rect>
+                    
+                    <g opacity="0.15">
+                        <circle cx="${cx}" cy="${cy}" r="${(minDim / 2) * 0.92}" fill="none" stroke="#7A7068" stroke-width="0.1" stroke-dasharray="0.2 1" />
+                        <line x1="${cx}" y1="1" x2="${cx}" y2="${viewH - 1}" stroke="#7A7068" stroke-width="0.1" stroke-dasharray="0.5 1.5" />
+                        <line x1="1" y1="${cy}" x2="${viewW - 1}" y2="${cy}" stroke="#7A7068" stroke-width="0.1" stroke-dasharray="0.5 1.5" />
+                    </g>
+                    
+                    <g>${geometryMarkup}</g>
+
+                    <text x="2" y="${viewH - 2}" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em">ID:${identifier}</text>
+                    <text x="${viewW - 2}" y="3" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em" text-anchor="end">F:${coreSymmetry}</text>
+                </svg>
+            `;
+
+            DOM.hashMetric.textContent = `PTR: 0x${hash.toString(16).toUpperCase().padStart(8, '0')}`;
+            DOM.specimenId.textContent = `SEQ: ${identifier}`;
+        };
+
+        const createDebouncer = (callback, delay) => {
+            let timerId;
+            return (...args) => {
+                clearTimeout(timerId);
+                timerId = setTimeout(() => callback(...args), delay);
+            };
+        };
+
+        const buttonFeedback = (buttonDom, originalHtml, successHtml) => {
+            buttonDom.innerHTML = successHtml;
+            buttonDom.classList.add('border-[#8B1A1A]', 'text-[#8B1A1A]');
+            setTimeout(() => {
+                buttonDom.innerHTML = originalHtml;
+                buttonDom.classList.remove('border-[#8B1A1A]', 'text-[#8B1A1A]');
+            }, 2000);
+        };
+
+        const handleSVGExport = async () => {
+            try {
+                const svgElement = DOM.target.querySelector('svg');
+                if (!svgElement) throw new Error("Render missing");
+                await navigator.clipboard.writeText(svgElement.outerHTML);
+                buttonFeedback(DOM.copyBtn, DOM.copyBtn.innerHTML, '<i class="fa-solid fa-check"></i> [ COPIED ]');
+            } catch (error) {
+                console.error('Export error:', error);
+            }
+        };
+
+        const handlePNGExport = () => {
+            const svgElement = DOM.target.querySelector('svg');
+            if (!svgElement) return;
+
+            const originalHtml = DOM.pngBtn.innerHTML;
+            DOM.pngBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> [ RENDERING ]';
+
+            // Calculate output resolution based on active ratio
+            const ratio = getActiveRatio();
+            let canvasW = CONFIG.baseExportScale;
+            let canvasH = CONFIG.baseExportScale;
+            
+            if (ratio.w > ratio.h) canvasH = Math.round(CONFIG.baseExportScale * (ratio.h / ratio.w));
+            else if (ratio.h > ratio.w) canvasW = Math.round(CONFIG.baseExportScale * (ratio.w / ratio.h));
+
+            const svgClone = svgElement.cloneNode(true);
+            svgClone.setAttribute('width', canvasW);
+            svgClone.setAttribute('height', canvasH);
+            
+            const svgData = new XMLSerializer().serializeToString(svgClone);
+            const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const img = new Image();
+
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = canvasW;
+                canvas.height = canvasH;
+                const ctx = canvas.getContext('2d');
+                
+                ctx.fillStyle = '#EFE9DC'; 
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvasW, canvasH);
+                
+                URL.revokeObjectURL(url);
+                
+                const pngUrl = canvas.toDataURL('image/png');
+                const downloadLink = document.createElement('a');
+                
+                const safeFileName = DOM.specimenId.textContent.replace('SEQ: ', '').trim();
+                downloadLink.download = `archival_specimen_${safeFileName}.png`;
+                downloadLink.href = pngUrl;
+                downloadLink.click();
+
+                buttonFeedback(DOM.pngBtn, originalHtml, '<i class="fa-solid fa-check"></i> [ SAVED ]');
+            };
+            
+            img.src = url;
+        };
+
+        // Event Listeners
+        const renderDebounced = createDebouncer(renderSynthesisPipeline, 32);
+
+        DOM.ratioBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                DOM.ratioBtns.forEach(b => b.removeAttribute('data-active'));
+                e.target.setAttribute('data-active', 'true');
+                renderSynthesisPipeline();
+            });
+        });
+
+        DOM.seedInput.addEventListener('input', renderDebounced);
+        DOM.colorInput.addEventListener('input', renderDebounced);
+        DOM.copyBtn.addEventListener('click', handleSVGExport);
+        DOM.pngBtn.addEventListener('click', handlePNGExport);
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSynthesisPipeline();
+            initCustomCursor();
+        });
+
+        const initCustomCursor = () => {
+            if (!window.matchMedia('(pointer: fine)').matches) return;
+
+            const cursor = document.createElement('div');
+            cursor.className = 'custom-cursor';
+            const trail = document.createElement('div');
+            trail.className = 'custom-cursor-trail';
+            
+            document.body.appendChild(cursor);
+            document.body.appendChild(trail);
+
+            let mouseX = -100, mouseY = -100, trailX = -100, trailY = -100;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                cursor.style.setProperty('--x', `${mouseX}px`);
+                cursor.style.setProperty('--y', `${mouseY}px`);
+            });
+
+            const animateTrail = () => {
+                trailX += (mouseX - trailX) * 0.25;
+                trailY += (mouseY - trailY) * 0.25;
+                trail.style.setProperty('--x', `${trailX}px`);
+                trail.style.setProperty('--y', `${trailY}px`);
+                requestAnimationFrame(animateTrail);
+            };
+            requestAnimationFrame(animateTrail);
+
+            const updateInteractables = () => {
+                document.querySelectorAll('a, button, input, .ratio-btn').forEach(el => {
+                    if (el.dataset.cursorHover) return;
+                    el.dataset.cursorHover = 'true';
+                    
+                    el.addEventListener('mouseenter', () => {
+                        cursor.classList.add('hover');
+                        trail.classList.add('hover');
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        cursor.classList.remove('hover');
+                        trail.classList.remove('hover');
+                    });
+                });
+            };
+            
+            updateInteractables();
+            
+            const observer = new MutationObserver(() => updateInteractables());
+            observer.observe(document.body, { childList: true, subtree: true });
+        };
+    </script>
+</body>
+</html>
