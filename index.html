@@ -72,6 +72,14 @@
                 "@type": "Answer",
                 "text": "The engine hashes narrative inputs to determine core symmetry, layer depth, and orbital complexity, ensuring each specimen is a unique archival record."
               }
+            },
+            {
+              "@type": "Question",
+              "name": "How can I embed the Geometry Vault into my website?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can embed the engine by adding '?mode=embed' to the URL. This provides a clean, iframe-optimized view of the specimen with a light archival background."
+              }
             }
           ]
         }
@@ -313,6 +321,11 @@
                 <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A] mt-8">03. ARCHIVAL_EXPORT_PROTOCOL</h2>
                 <p class="text-sm text-[#2A2520] leading-relaxed">
                     Specimens can be exported as high-resolution SVG or PNG files, adhering to the Swiss-Archival design system. The system employs a persistent organic grain and a blueprint grid foundation to mimic 300gsm matte-printed archival paper, ensuring visual consistency across digital and physical mediums.
+                </p>
+
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A] mt-8">04. EMBED_INTEGRATION_PROTOCOL</h2>
+                <p class="text-sm text-[#2A2520] leading-relaxed">
+                    The Geometry Vault functions as an embeddable service. By utilizing the `mode=embed` URL parameter, the interface is reduced to a strictly archival specimen view with a light bone-colored background, optimized for iframe integration. Developers can further control the synthesis engine in real-time via the `postMessage` API using the `UPDATE_SPECIMEN` message type.
                 </p>
             </div>
         </section>
