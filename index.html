@@ -162,7 +162,7 @@
 
         /* Custom Cursor */
         @media (pointer: fine) {
-            * { cursor: none !important; }
+            body:not([data-mode="embed"]) * { cursor: none !important; }
             .custom-cursor, .custom-cursor-trail {
                 position: fixed;
                 top: 0; left: 0;
@@ -664,7 +664,7 @@
         });
 
         const initCustomCursor = () => {
-            if (!window.matchMedia('(pointer: fine)').matches) return;
+            if (!window.matchMedia('(pointer: fine)').matches || document.body.dataset.mode === 'embed') return;
 
             const cursor = document.createElement('div');
             cursor.className = 'custom-cursor';
