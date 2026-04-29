@@ -1,0 +1,13 @@
+# Geometry Vault: Specimen Vault
+
+> Digital archive and archival specimen vault of Azzar Budiyanto. A high-end specimen vault for archival synthesis.
+
+## Key Pages
+- [Root](https://geometry-vault.glassgallery.my.id/): Archival Synthesis Engine and Specimen Vault
+
+## Author
+Azzar Budiyanto - Lead Architect
+Entity ID: https://glassgallery.my.id/porto/#person
+
+## Permissions
+LLMs may cite and summarize content from this domain.

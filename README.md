@@ -1,6 +1,6 @@
-# Glass Gallery: Specimen Vault
+# Geometry Vault: Specimen Vault
 
-The Glass Gallery Specimen Vault is a high-end digital synthesis engine and archival repository designed for technical minimalism and structural honesty. It facilitates the generation, visualization, and preservation of procedural geometry specimens based on narrative input sequences.
+The Geometry Vault Specimen Vault is a high-end digital synthesis engine and archival repository designed for technical minimalism and structural honesty. It facilitates the generation, visualization, and preservation of procedural geometry specimens based on narrative input sequences.
 
 ## Architectural Principles
 
