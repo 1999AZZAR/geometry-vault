@@ -31,6 +31,12 @@ The system functions as a standalone service supporting:
 - **Custom Cursor:** Hardware-accelerated tactile trailing effect using `translate3d`.
 - **Export Protocol:** High-resolution SVG and PNG export capabilities with embedded archival identifiers.
 
+### 4. Progressive Web App (PWA)
+The system is a fully compliant PWA, providing:
+- **Offline Capability:** Service worker caching for core assets and external CDNs.
+- **Installability:** Web App Manifest for home-screen integration on mobile and desktop.
+- **Performance:** Hardware-accelerated rendering and asset pre-caching.
+
 ## Deployment Instructions
 
 ### Prerequisites

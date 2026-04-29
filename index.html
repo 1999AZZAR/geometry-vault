@@ -6,6 +6,14 @@
     <meta name="description" content="Geometry Vault: Digital archive and archival specimen vault of Azzar Budiyanto. A high-end specimen vault for archival synthesis.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://geometry-vault.glassgallery.my.id/">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#8B1A1A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/icon-192.svg">
+    
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self' blob:; script-src 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: blob:;">
     <title>Geometry Vault: Digital Archive and Archival Specimen Vault</title>
     
@@ -646,6 +654,13 @@
             initServiceLogic();
             renderSynthesisPipeline();
             initCustomCursor();
+
+            // PWA Service Worker Registration
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker Registered', reg))
+                    .catch(err => console.error('Service Worker Registration Failed', err));
+            }
         });
 
         const initCustomCursor = () => {
