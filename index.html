@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Geometry Vault: Digital archive and archival specimen vault of Azzar Budiyanto. A high-end specimen vault for archival synthesis.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- Dynamic Social Previews -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Geometry Vault | Archival Specimen">
+    <meta property="og:description" content="Procedural geometry synthesis and archival preservation.">
+    <meta property="og:image" content="https://geometry-vault.glassgallery.my.id/preview-placeholder.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Geometry Vault | Archival Specimen">
+    
     <link rel="canonical" href="https://geometry-vault.glassgallery.my.id/">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self' blob:; script-src 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: blob:;">
     <title>Geometry Vault: Digital Archive and Archival Specimen Vault</title>
@@ -286,7 +295,10 @@
                     </button>
                     </div>
                     <button id="embed-btn" class="font-tech text-[10px] text-[#7A7068] hover:text-[#8B1A1A] transition-all flex items-center justify-center gap-2 px-4 py-2 border border-[#DDD5C5] hover:border-[#8B1A1A] bg-[#E8E0D0] w-full">
-                    <i class="fa-solid fa-share-nodes"></i> [ GENERATE EMBED ]
+                        <i class="fa-solid fa-share-nodes"></i> [ GENERATE EMBED ]
+                    </button>
+                    <button id="meta-btn" class="font-tech text-[10px] text-[#7A7068] hover:text-[#8B1A1A] transition-all flex items-center justify-center gap-2 px-4 py-2 border border-[#DDD5C5] hover:border-[#8B1A1A] bg-[#E8E0D0] w-full">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i> [ FETCH METADATA ]
                     </button>
                     </footer>        </section>
 
@@ -439,6 +451,37 @@
             };
         };
 
+        const parseMetadata = () => {
+            const rawSeed = DOM.seedInput.value || "Archival Initial Data";
+            const hash = generateSecureHash(rawSeed);
+            const identifier = generateSequenceIdentifier(hash);
+            const ratio = getActiveRatio();
+            
+            const metadata = {
+                title: `Specimen ${identifier} | Geometry Vault`,
+                description: `Procedural geometry specimen synthesized from sequence ${identifier}.`,
+                identifier: identifier,
+                hash: `0x${hash.toString(16).toUpperCase()}`,
+                aspectRatio: `${ratio.w}:${ratio.h}`,
+                author: "Azzar Budiyanto",
+                provider: "Geometry Vault Archival Service",
+                timestamp: new Date().toISOString()
+            };
+
+            // Update social tags dynamically
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            const ogDesc = document.querySelector('meta[property="og:description"]');
+            const twTitle = document.querySelector('meta[name="twitter:title"]');
+            
+            if (ogTitle) ogTitle.setAttribute('content', metadata.title);
+            if (ogDesc) ogDesc.setAttribute('content', metadata.description);
+            if (twTitle) twTitle.setAttribute('content', metadata.title);
+            
+            document.title = metadata.title;
+
+            return metadata;
+        };
+
         const initServiceLogic = () => {
             const params = new URLSearchParams(window.location.search);
             
@@ -474,6 +517,21 @@
                     }
                     renderSynthesisPipeline();
                 }
+
+                if (type === 'GET_METADATA') {
+                    const metadata = parseMetadata();
+                    e.source.postMessage({ type: 'METADATA_RESPONSE', data: metadata }, e.origin);
+                }
+
+                if (type === 'GET_IMAGE_URL') {
+                    const svgElement = DOM.target.querySelector('svg');
+                    if (svgElement) {
+                        const svgData = new XMLSerializer().serializeToString(svgElement);
+                        const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                        const url = URL.createObjectURL(blob);
+                        e.source.postMessage({ type: 'IMAGE_URL_RESPONSE', data: url }, e.origin);
+                    }
+                }
             });
         };
 
@@ -491,6 +549,16 @@
             }
         };
 
+        const handleMetaExport = async () => {
+            const metadata = parseMetadata();
+            try {
+                await navigator.clipboard.writeText(JSON.stringify(metadata, null, 2));
+                buttonFeedback(DOM.metaBtn, DOM.metaBtn.innerHTML, '<i class="fa-solid fa-check"></i> [ JSON_COPIED ]');
+            } catch (err) {
+                console.error('Meta export failed', err);
+            }
+        };
+
         const renderSynthesisPipeline = () => {
             const rawSeed = DOM.seedInput.value || "Archival Initial Data";
             const rawPalette = DOM.colorInput.value;
@@ -498,6 +566,9 @@
             const identifier = generateSequenceIdentifier(hash);
             const activePalette = sanitizePalette(rawPalette);
             
+            // Update metadata whenever we render
+            parseMetadata();
+
             // Layout Calculations based on Aspect Ratio
             const ratio = getActiveRatio();
             let viewW = 100;
@@ -641,6 +712,7 @@
         DOM.copyBtn.addEventListener('click', handleSVGExport);
         DOM.pngBtn.addEventListener('click', handlePNGExport);
         DOM.embedBtn.addEventListener('click', handleEmbedExport);
+        DOM.metaBtn.addEventListener('click', handleMetaExport);
         
         window.addEventListener('DOMContentLoaded', () => {
             initServiceLogic();
