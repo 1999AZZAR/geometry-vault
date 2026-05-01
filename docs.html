@@ -102,6 +102,8 @@
                 <li><a href="#endpoints" class="nav-link">02. ENDPOINTS</a></li>
                 <li><a href="#embed-mode" class="nav-link">03. EMBED_MODE</a></li>
                 <li><a href="#real-time" class="nav-link">04. REAL_TIME_CONTROL</a></li>
+                <li><a href="#autocache" class="nav-link">05. SMART_AUTOCACHE</a></li>
+                <li><a href="#id-reconstruction" class="nav-link">06. ID_RECONSTRUCTION</a></li>
             </ul>
         </nav>
 
@@ -187,6 +189,40 @@ vaultFrame.contentWindow.postMessage({
     h: 9
   }
 }, '*');</code></pre>
+            </section>
+
+            <!-- Section 05: Smart Autocache -->
+            <section id="autocache" class="surface-card p-8 rounded-sm space-y-4">
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A]">05. SMART_AUTOCACHE_PROTOCOL</h2>
+                <p class="text-sm text-[#2A2520] leading-relaxed">
+                    To ensure near-instant response times for high-traffic integrations (e.g., WordPress titles), the vault employs a Dual-Layer Smart Autocache. Successful requests are cached at the edge (Nginx) and in-memory (FastAPI).
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-[#E8E0D0] p-4 border border-[#DDD5C5]">
+                        <p class="font-tech text-[9px] text-[#2A2520] mb-1 font-bold">CACHE_TTL</p>
+                        <p class="text-xs">24 Hours (86,400 seconds)</p>
+                    </div>
+                    <div class="bg-[#E8E0D0] p-4 border border-[#DDD5C5]">
+                        <p class="font-tech text-[9px] text-[#2A2520] mb-1 font-bold">MONITORING_HEADER</p>
+                        <p class="text-xs">X-Cache-Status: HIT | MISS</p>
+                    </div>
+                </div>
+                <p class="text-[11px] text-[#7A7068] italic">Note: The system serves stale content automatically if the backend is under heavy load, ensuring constant availability.</p>
+            </section>
+
+            <!-- Section 06: ID Reconstruction -->
+            <section id="id-reconstruction" class="surface-card p-8 rounded-sm space-y-4">
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A]">06. ID_RECONSTRUCTION_LOGIC</h2>
+                <p class="text-sm text-[#2A2520] leading-relaxed">
+                    The sequence identifier (SEQ-ID) is a reversible Base32 representation of the 32-bit FNV-1a hash. This allows specimens to be perfectly reconstructed without the original narrative seed.
+                </p>
+                <div class="bg-[#E8E0D0] p-4 border border-[#DDD5C5]">
+                    <p class="font-tech text-[10px] text-[#2A2520] mb-2 font-bold">RECOVERY_PARAMETER</p>
+                    <code class="text-xs">GET /?id=83-XHVBYJ&colors=#8B1A1A...</code>
+                </div>
+                <p class="text-sm text-[#2A2520]">
+                    In the main vault interface, users can inject a known identifier into the <code>ID_LOAD_INPUT</code> field to recover a specific geometry specimen from the archival matrix.
+                </p>
             </section>
         </main>
 
