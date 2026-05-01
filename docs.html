@@ -104,6 +104,7 @@
                 <li><a href="#real-time" class="nav-link">04. REAL_TIME_CONTROL</a></li>
                 <li><a href="#autocache" class="nav-link">05. SMART_AUTOCACHE</a></li>
                 <li><a href="#id-reconstruction" class="nav-link">06. ID_RECONSTRUCTION</a></li>
+                <li><a href="#wp-integration" class="nav-link">07. WORDPRESS_INTEGRATION</a></li>
             </ul>
         </nav>
 
@@ -223,6 +224,37 @@ vaultFrame.contentWindow.postMessage({
                 <p class="text-sm text-[#2A2520]">
                     In the main vault interface, users can inject a known identifier into the <code>ID_LOAD_INPUT</code> field to recover a specific geometry specimen from the archival matrix.
                 </p>
+            </section>
+
+            <!-- Section 07: WordPress Integration -->
+            <section id="wp-integration" class="surface-card p-8 rounded-sm space-y-4">
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A]">07. WORDPRESS_INTEGRATION_GUIDE</h2>
+                <p class="text-sm text-[#2A2520] leading-relaxed">
+                    Automate featured image generation by hooking into the WordPress <code>save_post</code> action. This implementation leverages the Smart Autocache to ensure that multiple edits to the same title do not strain the synthesis engine.
+                </p>
+                <pre class="text-xs"><code>// Add to functions.php
+add_action('save_post', function($post_id) {
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    
+    $title = get_the_title($post_id);
+    $vault_url = "https://geometry-vault.glassgallery.my.id/api/generate";
+    
+    $response = wp_remote_post($vault_url, [
+        'headers' => ['Content-Type' => 'application/json'],
+        'body'    => json_encode([
+            'seed'    => $title,
+            'format'  => 'png',
+            'ratio_w' => 16,
+            'ratio_h' => 9,
+            'scale'   => 1200
+        ])
+    ]);
+
+    if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
+        $cache_status = wp_remote_retrieve_header($response, 'x-cache-status');
+        // Handle image upload and set as featured image...
+    }
+}, 10, 1);</code></pre>
             </section>
         </main>
 
