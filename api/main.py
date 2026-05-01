@@ -44,20 +44,22 @@ app.add_middleware(
 
 @app.get("/api/health", response_model=HealthResponse, tags=["System"])
 @limiter.limit("30/minute")
-async def health_check(request: Request):
+async def health_check(request: Request, response: Response):
     """Health check endpoint."""
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return HealthResponse()
 
 
 @app.post("/api/generate", response_model=GenerateResponse, tags=["Generation"])
 @limiter.limit("20/minute")
-async def generate_geometry_post(request: Request, body: GenerateRequest):
+async def generate_geometry_post(request: Request, response: Response, body: GenerateRequest):
     """
     Generate procedural geometry from narrative sequence.
     
     Accepts JSON body with generation parameters and returns SVG or PNG.
     Rate limited to 20 requests per minute per IP.
     """
+    response.headers["Cache-Control"] = "public, max-age=86400, stale-while-revalidate=3600"
     try:
         svg_content, seq_id, hash_hex = cached_render_svg(
             body.seed,
@@ -73,7 +75,8 @@ async def generate_geometry_post(request: Request, body: GenerateRequest):
                 headers={
                     "Content-Disposition": f'attachment; filename="specimen_{seq_id}.svg"',
                     "X-Sequence-ID": seq_id,
-                    "X-Hash": hash_hex
+                    "X-Hash": hash_hex,
+                    "Cache-Control": "public, max-age=86400"
                 }
             )
         
@@ -103,7 +106,8 @@ async def generate_geometry_post(request: Request, body: GenerateRequest):
                     headers={
                         "Content-Disposition": f'attachment; filename="specimen_{seq_id}.png"',
                         "X-Sequence-ID": seq_id,
-                        "X-Hash": hash_hex
+                        "X-Hash": hash_hex,
+                        "Cache-Control": "public, max-age=86400"
                     }
                 )
             except ImportError:
@@ -121,6 +125,7 @@ async def generate_geometry_post(request: Request, body: GenerateRequest):
 @limiter.limit("20/minute")
 async def generate_geometry_get(
     request: Request,
+    response: Response,
     seed: str = Query("Archival Initial Data", max_length=128, description="Narrative sequence"),
     colors: str = Query("#8B1A1A, #2A2520, #7A7068, #E8E0D0", max_length=256, description="Color palette"),
     ratio_w: int = Query(1, ge=1, le=16, description="Aspect ratio width"),
@@ -142,13 +147,14 @@ async def generate_geometry_get(
         format=format,
         scale=scale
     )
-    return await generate_geometry_post(request, body)
+    return await generate_geometry_post(request, response, body)
 
 
 @app.get("/api/preview", response_model=GenerateResponse, tags=["Generation"])
 @limiter.limit("30/minute")
 async def preview_geometry(
     request: Request,
+    response: Response,
     seed: str = Query("Archival Initial Data", max_length=128),
     colors: str = Query("#8B1A1A, #2A2520, #7A7068, #E8E0D0", max_length=256),
     ratio_w: int = Query(1, ge=1, le=16),
@@ -160,6 +166,7 @@ async def preview_geometry(
     Returns sequence ID, hash, and generation parameters.
     Rate limited to 30 requests per minute per IP.
     """
+    response.headers["Cache-Control"] = "public, max-age=86400, stale-while-revalidate=3600"
     try:
         svg_content, seq_id, hash_hex = cached_render_svg(
             seed, colors, ratio_w, ratio_h

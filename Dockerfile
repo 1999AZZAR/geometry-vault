@@ -35,8 +35,9 @@ ENV PATH=/root/.local/bin:$PATH
 COPY . /app
 COPY nginx.conf /etc/nginx/nginx.conf
 
-RUN mkdir -p /var/log/supervisor /var/log/nginx /var/run \
-    && chmod -R 755 /var/log/supervisor /var/log/nginx
+RUN mkdir -p /var/log/supervisor /var/log/nginx /var/run /var/cache/nginx \
+    && chmod -R 755 /var/log/supervisor /var/log/nginx \
+    && chown -R www-data:www-data /var/cache/nginx
 
 RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf && \
     echo 'nodaemon=true' >> /etc/supervisor/conf.d/supervisord.conf && \
