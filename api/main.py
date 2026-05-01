@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi import FastAPI, HTTPException, Query, Response, Request
 from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
@@ -38,14 +38,14 @@ app.add_middleware(
 
 @app.get("/api/health", response_model=HealthResponse, tags=["System"])
 @limiter.limit("30/minute")
-async def health_check(request: Response):
+async def health_check(request: Request):
     """Health check endpoint."""
     return HealthResponse()
 
 
 @app.post("/api/generate", response_model=GenerateResponse, tags=["Generation"])
 @limiter.limit("20/minute")
-async def generate_geometry_post(request: Response, body: GenerateRequest):
+async def generate_geometry_post(request: Request, body: GenerateRequest):
     """
     Generate procedural geometry from narrative sequence.
     
@@ -114,12 +114,12 @@ async def generate_geometry_post(request: Response, body: GenerateRequest):
 @app.get("/api/generate", tags=["Generation"])
 @limiter.limit("20/minute")
 async def generate_geometry_get(
-    request: Response,
+    request: Request,
     seed: str = Query("Archival Initial Data", max_length=128, description="Narrative sequence"),
     colors: str = Query("#8B1A1A, #2A2520, #7A7068, #E8E0D0", max_length=256, description="Color palette"),
     ratio_w: int = Query(1, ge=1, le=16, description="Aspect ratio width"),
     ratio_h: int = Query(1, ge=1, le=16, description="Aspect ratio height"),
-    format: str = Query("svg", regex="^(svg|png)$", description="Output format"),
+    format: str = Query("svg", pattern="^(svg|png)$", description="Output format"),
     scale: int = Query(2400, ge=800, le=4800, description="PNG scale (pixels)")
 ):
     """
@@ -142,7 +142,7 @@ async def generate_geometry_get(
 @app.get("/api/preview", response_model=GenerateResponse, tags=["Generation"])
 @limiter.limit("30/minute")
 async def preview_geometry(
-    request: Response,
+    request: Request,
     seed: str = Query("Archival Initial Data", max_length=128),
     colors: str = Query("#8B1A1A, #2A2520, #7A7068, #E8E0D0", max_length=256),
     ratio_w: int = Query(1, ge=1, le=16),
