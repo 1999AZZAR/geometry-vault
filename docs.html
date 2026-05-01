@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Geometry Vault Technical Documentation: API and Embed Integration protocols.">
+    <title>Technical Documentation | Geometry Vault</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --archival-bg: #E8E0D0;
+            --archival-fg: #2A2520;
+            --archival-surface: #EFE9DC;
+            --archival-accent: #8B1A1A;
+            --archival-muted: #DDD5C5;
+            --archival-meta: #7A7068;
+            --grid-color: rgba(191, 182, 166, 0.2);
+        }
+
+        body { 
+            background-color: var(--archival-bg); 
+            background-image: linear-gradient(to right, var(--grid-color) 1px, transparent 1px);
+            background-size: 10% 100%;
+            color: var(--archival-fg); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .font-tech { 
+            font-family: 'JetBrains Mono', monospace; 
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .surface-card { 
+            background: var(--archival-surface); 
+            border: 1px solid var(--archival-muted); 
+            box-shadow: 0 4px 24px -12px rgba(42, 37, 32, 0.08);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(42, 37, 32, 0.05);
+            padding: 0.2rem 0.4rem;
+            border-radius: 2px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--archival-bg);
+            border-left: 3px solid var(--archival-accent);
+            padding: 1rem;
+            overflow-x: auto;
+            font-size: 0.85em;
+            margin: 1rem 0;
+        }
+
+        .noise-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.04;
+            mix-blend-mode: multiply;
+        }
+
+        .nav-link:hover { color: var(--archival-accent); }
+    </style>
+</head>
+<body class="min-h-screen p-4 sm:p-8">
+    <svg class="noise-layer" aria-hidden="true">
+        <filter id="fractalNoise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#fractalNoise)"/>
+    </svg>
+
+    <div class="max-w-4xl mx-auto space-y-8 relative z-10">
+        <header class="flex items-center justify-between border-b border-[#DDD5C5] pb-6">
+            <div class="space-y-1">
+                <a href="/" class="font-tech text-[10px] text-[#7A7068] hover:text-[#8B1A1A] transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> RETURN_TO_VAULT
+                </a>
+                <h1 class="font-tech text-xl font-bold text-[#2A2520]">TECHNICAL_DOCUMENTATION</h1>
+            </div>
+            <div class="text-right hidden sm:block">
+                <p class="font-tech text-[10px] text-[#7A7068]">VERSION: 1.0.0</p>
+                <p class="font-tech text-[10px] text-[#7A7068]">AUTH: ARCHIVAL_SYNTHESIS</p>
+            </div>
+        </header>
+
+        <nav class="surface-card p-4 rounded-sm">
+            <ul class="flex flex-wrap gap-6 text-[10px] font-tech font-semibold">
+                <li><a href="#api-overview" class="nav-link">01. API_OVERVIEW</a></li>
+                <li><a href="#endpoints" class="nav-link">02. ENDPOINTS</a></li>
+                <li><a href="#embed-mode" class="nav-link">03. EMBED_MODE</a></li>
+                <li><a href="#real-time" class="nav-link">04. REAL_TIME_CONTROL</a></li>
+            </ul>
+        </nav>
+
+        <main class="space-y-12">
+            <!-- Section 01: API Overview -->
+            <section id="api-overview" class="surface-card p-8 rounded-sm space-y-4">
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A]">01. API_OVERVIEW</h2>
+                <p class="text-sm text-[#2A2520] leading-relaxed">
+                    The Geometry Vault API is a RESTful service built with FastAPI, providing programmatic access to the procedural synthesis engine. It is designed for high-performance generation of SVG and PNG specimens, utilizing narrative hashing to ensure structural uniqueness.
+                </p>
+                <div class="bg-[#E8E0D0] p-4 border border-[#DDD5C5]">
+                    <p class="font-tech text-[10px] text-[#2A2520] mb-2 font-bold">BASE_URL</p>
+                    <code class="text-xs">https://geometry-vault.glassgallery.my.id/api</code>
+                </div>
+            </section>
+
+            <!-- Section 02: Endpoints -->
+            <section id="endpoints" class="surface-card p-8 rounded-sm space-y-6">
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A]">02. ENDPOINTS</h2>
+                
+                <div class="space-y-4">
+                    <h3 class="font-tech text-xs font-bold">GET /health</h3>
+                    <p class="text-sm text-[#2A2520]">System status and version check.</p>
+                    <pre><code>{
+  "status": "healthy",
+  "service": "geometry-vault-api",
+  "version": "1.0.0"
+}</code></pre>
+                </div>
+
+                <div class="space-y-4 pt-6 border-t border-[#DDD5C5]">
+                    <h3 class="font-tech text-xs font-bold">POST /generate</h3>
+                    <p class="text-sm text-[#2A2520]">Generate archival specimens with JSON parameters.</p>
+                    <pre><code>curl -X POST "https://geometry-vault.glassgallery.my.id/api/generate" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "seed": "Archival Sequence",
+    "colors": "#8B1A1A, #2A2520",
+    "format": "png",
+    "scale": 2400
+  }'</code></pre>
+                </div>
+
+                <div class="space-y-4 pt-6 border-t border-[#DDD5C5]">
+                    <h3 class="font-tech text-xs font-bold">GET /preview</h3>
+                    <p class="text-sm text-[#2A2520]">Retrieve metadata and base64 preview without direct download.</p>
+                    <p class="text-xs text-[#7A7068]">Parameters: <code>seed</code>, <code>colors</code>, <code>ratio_w</code>, <code>ratio_h</code></p>
+                </div>
+            </section>
+
+            <!-- Section 03: Embed Mode -->
+            <section id="embed-mode" class="surface-card p-8 rounded-sm space-y-4">
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A]">03. EMBED_MODE</h2>
+                <p class="text-sm text-[#2A2520] leading-relaxed">
+                    Embed mode provides a minimalist, iframe-optimized view of the specimen. It removes the UI controls and applies a bone-colored background suitable for archival presentation.
+                </p>
+                <div class="bg-[#E8E0D0] p-4 border border-[#DDD5C5] space-y-4">
+                    <div>
+                        <p class="font-tech text-[10px] text-[#2A2520] mb-2 font-bold">IFRAME_PROTOCOL</p>
+                        <pre class="bg-white/50 border-none m-0"><code>&lt;iframe 
+  src="https://geometry-vault.glassgallery.my.id/?mode=embed&seed=YourSeed" 
+  width="500" height="500" 
+  frameborder="0"&gt;
+&lt;/iframe&gt;</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 04: Real-time Control -->
+            <section id="real-time" class="surface-card p-8 rounded-sm space-y-4">
+                <h2 class="font-tech text-sm font-semibold border-b border-[#DDD5C5] pb-2 text-[#8B1A1A]">04. REAL_TIME_CONTROL</h2>
+                <p class="text-sm text-[#2A2520] leading-relaxed">
+                    The embed interface can be controlled dynamically from a parent window via the <code>postMessage</code> API. This allows for seamless integration into interactive platforms or CMS environments.
+                </p>
+                <pre><code>// Example: Update embedded specimen
+const vaultFrame = document.querySelector('iframe');
+vaultFrame.contentWindow.postMessage({
+  type: 'UPDATE_SPECIMEN',
+  data: {
+    seed: 'New Narrative Sequence',
+    colors: '#8B1A1A, #EFE9DC',
+    w: 16,
+    h: 9
+  }
+}, '*');</code></pre>
+            </section>
+        </main>
+
+        <footer class="text-center py-12">
+            <p class="font-tech text-[10px] text-[#7A7068]">GEOMETRY_VAULT &copy; 2026 | AZZAR_BUDIYANTO</p>
+        </footer>
+    </div>
+</body>
+</html>
