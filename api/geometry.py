@@ -147,7 +147,7 @@ class GeometryGenerator:
             )
             svg_markup.append(
                 f'<line x1="{cx}" y1="{cy}" x2="{ox}" y2="{oy}" '
-                f'stroke="{palette[2]}" stroke-width="0.05" stroke-dasharray="0.2 0.8" />'
+                f'stroke="{palette[min(2, len(palette) - 1)]}" stroke-width="0.05" stroke-dasharray="0.2 0.8" />'
             )
         
         return '\n'.join(svg_markup)
@@ -167,8 +167,8 @@ class GeometryGenerator:
         identifier = GeometryGenerator.generate_sequence_identifier(hash_value)
         palette = GeometryGenerator.sanitize_palette(colors)
         
-        view_w = 100.0
-        view_h = 100.0
+        view_w = 100
+        view_h = 100
         
         if ratio_w > ratio_h:
             view_h = round((100 * (ratio_h / ratio_w)) * 100) / 100
