@@ -7,12 +7,18 @@ from slowapi.errors import RateLimitExceeded
 from io import BytesIO
 import base64
 import logging
+import functools
 
 from .models import GenerateRequest, GenerateResponse, HealthResponse
 from .geometry import GeometryGenerator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Server-side cache for SVG generation (Precache mechanism)
+@functools.lru_cache(maxsize=1024)
+def cached_render_svg(seed: str, colors: str, ratio_w: int, ratio_h: int):
+    return GeometryGenerator.render_svg(seed, colors, ratio_w, ratio_h)
 
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(
@@ -53,7 +59,7 @@ async def generate_geometry_post(request: Request, body: GenerateRequest):
     Rate limited to 20 requests per minute per IP.
     """
     try:
-        svg_content, seq_id, hash_hex = GeometryGenerator.render_svg(
+        svg_content, seq_id, hash_hex = cached_render_svg(
             body.seed,
             body.colors,
             body.ratio_w,
@@ -155,7 +161,7 @@ async def preview_geometry(
     Rate limited to 30 requests per minute per IP.
     """
     try:
-        svg_content, seq_id, hash_hex = GeometryGenerator.render_svg(
+        svg_content, seq_id, hash_hex = cached_render_svg(
             seed, colors, ratio_w, ratio_h
         )
         
