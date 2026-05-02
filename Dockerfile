@@ -69,4 +69,8 @@ RUN cp -r /app/* /usr/share/nginx/html/ && \
 
 EXPOSE 80
 
+# Health check to ensure service is responding
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost/api/health || exit 1
+
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

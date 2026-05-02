@@ -8,6 +8,7 @@ from io import BytesIO
 import base64
 import logging
 import functools
+import asyncio
 
 from .models import GenerateRequest, GenerateResponse, HealthResponse
 from .geometry import GeometryGenerator
@@ -61,11 +62,16 @@ async def generate_geometry_post(request: Request, response: Response, body: Gen
     """
     response.headers["Cache-Control"] = "public, max-age=86400, stale-while-revalidate=3600"
     try:
-        svg_content, seq_id, hash_hex = cached_render_svg(
-            body.seed,
-            body.colors,
-            body.ratio_w,
-            body.ratio_h
+        # Add timeout for SVG generation (10 seconds)
+        svg_content, seq_id, hash_hex = await asyncio.wait_for(
+            asyncio.to_thread(
+                cached_render_svg,
+                body.seed,
+                body.colors,
+                body.ratio_w,
+                body.ratio_h
+            ),
+            timeout=10.0
         )
         
         if body.format == "svg":
@@ -93,11 +99,16 @@ async def generate_geometry_post(request: Request, response: Response, body: Gen
                     height = body.scale
                     width = round(body.scale * ratio)
                 
-                png_data = cairosvg.svg2png(
-                    bytestring=svg_content.encode('utf-8'),
-                    output_width=width,
-                    output_height=height,
-                    background_color='#EFE9DC'
+                # Add timeout for PNG conversion (15 seconds)
+                png_data = await asyncio.wait_for(
+                    asyncio.to_thread(
+                        cairosvg.svg2png,
+                        bytestring=svg_content.encode('utf-8'),
+                        output_width=width,
+                        output_height=height,
+                        background_color='#EFE9DC'
+                    ),
+                    timeout=15.0
                 )
                 
                 return StreamingResponse(
@@ -116,6 +127,9 @@ async def generate_geometry_post(request: Request, response: Response, body: Gen
                     detail="PNG generation not available. Install cairosvg and PIL."
                 )
         
+    except asyncio.TimeoutError:
+        logger.error("Generation timeout exceeded")
+        raise HTTPException(status_code=504, detail="Generation timeout exceeded. Try a simpler configuration.")
     except Exception as e:
         logger.error(f"Generation error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
@@ -168,8 +182,13 @@ async def preview_geometry(
     """
     response.headers["Cache-Control"] = "public, max-age=86400, stale-while-revalidate=3600"
     try:
-        svg_content, seq_id, hash_hex = cached_render_svg(
-            seed, colors, ratio_w, ratio_h
+        # Add timeout for preview generation (10 seconds)
+        svg_content, seq_id, hash_hex = await asyncio.wait_for(
+            asyncio.to_thread(
+                cached_render_svg,
+                seed, colors, ratio_w, ratio_h
+            ),
+            timeout=10.0
         )
         
         svg_base64 = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
@@ -187,6 +206,9 @@ async def preview_geometry(
                 "ratio_h": ratio_h
             }
         })
+    except asyncio.TimeoutError:
+        logger.error("Preview timeout exceeded")
+        raise HTTPException(status_code=504, detail="Preview timeout exceeded. Try a simpler configuration.")
     except Exception as e:
         logger.error(f"Preview error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Preview failed: {str(e)}")

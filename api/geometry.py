@@ -11,6 +11,7 @@ class GeometryGenerator:
     
     BASE_RESOLUTION = 240
     MAX_LAYERS = 7
+    MAX_SVG_SIZE = 1024 * 1024  # 1MB limit for SVG output
     ARCHIVAL_PALETTE = ['#8B1A1A', '#2A2520', '#7A7068', '#5A5048']
     
     @staticmethod
@@ -200,5 +201,14 @@ class GeometryGenerator:
     <text x="2" y="{view_h - 2}" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em">ID:{identifier}, F:{core_symmetry}</text>
     <text x="{view_w - 2}" y="3" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em" text-anchor="end">PTR:{hash_hex}</text>
 </svg>'''
+        
+        # Validate SVG output size
+        svg_size = len(svg_content.encode('utf-8'))
+        if svg_size > GeometryGenerator.MAX_SVG_SIZE:
+            raise ValueError(
+                f"Generated SVG exceeds maximum size limit "
+                f"({svg_size} bytes > {GeometryGenerator.MAX_SVG_SIZE} bytes). "
+                f"Try reducing aspect ratio or using smaller dimensions."
+            )
         
         return svg_content, identifier, hash_hex
