@@ -197,7 +197,7 @@ class GeometryGenerator:
     
     <g>{geometry_markup}</g>
 
-    <text x="2" y="{view_h - 2}" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em">ID:{identifier}</text>
+    <text x="2" y="{view_h - 2}" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em">ID:{identifier}, F:{core_symmetry}</text>
     <text x="{view_w - 2}" y="3" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em" text-anchor="end">PTR:{hash_hex}</text>
 </svg>'''
         
