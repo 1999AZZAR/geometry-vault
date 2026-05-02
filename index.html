@@ -170,7 +170,7 @@
 
         /* Custom Cursor */
         @media (pointer: fine) {
-            body:not([data-mode="embed"]) * { cursor: none !important; }
+            body:not([data-mode="embed"]) *:not(#fullscreen-btn):not(#fullscreen-btn *) { cursor: none !important; }
             .custom-cursor, .custom-cursor-trail {
                 position: fixed;
                 top: 0; left: 0;
@@ -199,15 +199,19 @@
 
         /* Fullscreen Viewer */
         #fullscreen-btn {
-            opacity: 0;
+            opacity: 1 !important;
             transition: opacity 0.2s ease;
             pointer-events: auto !important;
             cursor: pointer !important;
+            display: flex !important;
         }
 
+        /* Temporarily show button always for debugging */
+        /*
         #render-target:hover #fullscreen-btn {
             opacity: 1 !important;
         }
+        */
 
         #fullscreen-viewer.active {
             display: block;
