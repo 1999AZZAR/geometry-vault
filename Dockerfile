@@ -53,7 +53,7 @@ RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf && \
     echo 'stderr_logfile=/var/log/supervisor/nginx.err.log' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo '' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo '[program:api]' >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo 'command=/root/.local/bin/uvicorn api.main:app --host 127.0.0.1 --port 8000 --workers 2' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'command=/root/.local/bin/uvicorn api.main:app --host 127.0.0.1 --port 8000 --workers 2 --timeout-keep-alive 5 --limit-concurrency 100 --limit-max-requests 1000' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'directory=/app' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf && \
     echo 'autorestart=true' >> /etc/supervisor/conf.d/supervisord.conf && \
