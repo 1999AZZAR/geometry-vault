@@ -187,9 +187,16 @@ class GeometryGenerator:
         
         hash_hex = f"0x{hash_value:08X}"
         
+        margin = round(min_dim * 0.024 * 100) / 100
+        inner_offset = round(min_dim * 0.007 * 100) / 100
+        
         svg_content = f'''<svg viewBox="0 0 {view_w} {view_h}" xmlns="http://www.w3.org/2000/svg" style="aspect-ratio: {ratio_w}/{ratio_h};">
     <rect width="{view_w}" height="{view_h}" fill="transparent"/>
     
+    <!-- Archival Drafting Borders (Swiss-Archival Standard) -->
+    <rect x="{margin}" y="{margin}" width="{view_w - margin * 2}" height="{view_h - margin * 2}" fill="none" stroke="#2A2520" stroke-width="0.18" />
+    <rect x="{margin + inner_offset}" y="{margin + inner_offset}" width="{view_w - (margin + inner_offset) * 2}" height="{view_h - (margin + inner_offset) * 2}" fill="none" stroke="#7A7068" stroke-width="0.08" />
+
     <g opacity="0.15">
         <circle cx="{cx}" cy="{cy}" r="{(min_dim / 2) * 0.92}" fill="none" stroke="#7A7068" stroke-width="0.1" stroke-dasharray="0.2 1" />
         <line x1="{cx}" y1="1" x2="{cx}" y2="{view_h - 1}" stroke="#7A7068" stroke-width="0.1" stroke-dasharray="0.5 1.5" />
@@ -197,9 +204,6 @@ class GeometryGenerator:
     </g>
     
     <g>{geometry_markup}</g>
-
-    <text x="2" y="{view_h - 2}" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em">ID:{identifier}, F:{core_symmetry}</text>
-    <text x="{view_w - 2}" y="3" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em" text-anchor="end">PTR:{hash_hex}</text>
 </svg>'''
         
         # Validate SVG output size

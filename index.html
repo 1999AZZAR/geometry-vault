@@ -754,10 +754,17 @@
             const coreSymmetry = (hash % 8) + 2;
             const geometryMarkup = synthesizeGeometry(hash, activePalette, cx, cy, minDim);
 
+            const margin = Math.round(minDim * 0.024 * 100) / 100;
+            const innerOffset = Math.round(minDim * 0.007 * 100) / 100;
+
             DOM.target.innerHTML = `
                 <svg viewBox="0 0 ${viewW} ${viewH}" style="aspect-ratio: ${ratio.w}/${ratio.h};" xmlns="http://www.w3.org/2000/svg" class="specimen-svg w-full h-full">
                     <rect width="${viewW}" height="${viewH}" fill="transparent"></rect>
                     
+                    <!-- Archival Drafting Borders (Swiss-Archival Standard) -->
+                    <rect x="${margin}" y="${margin}" width="${viewW - margin * 2}" height="${viewH - margin * 2}" fill="none" stroke="#2A2520" stroke-width="0.18" />
+                    <rect x="${margin + innerOffset}" y="${margin + innerOffset}" width="${viewW - (margin + innerOffset) * 2}" height="${viewH - (margin + innerOffset) * 2}" fill="none" stroke="#7A7068" stroke-width="0.08" />
+
                     <g opacity="0.15">
                         <circle cx="${cx}" cy="${cy}" r="${(minDim / 2) * 0.92}" fill="none" stroke="#7A7068" stroke-width="0.1" stroke-dasharray="0.2 1" />
                         <line x1="${cx}" y1="1" x2="${cx}" y2="${viewH - 1}" stroke="#7A7068" stroke-width="0.1" stroke-dasharray="0.5 1.5" />
@@ -765,9 +772,6 @@
                     </g>
                     
                     <g>${geometryMarkup}</g>
-
-                    <text x="2" y="${viewH - 2}" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em">ID:${identifier}, F:${coreSymmetry}</text>
-                    <text x="${viewW - 2}" y="3" font-size="1.2" font-family="'JetBrains Mono', monospace" fill="#7A7068" letter-spacing="0.1em" text-anchor="end">PTR:0x${hash.toString(16).toUpperCase().padStart(8, '0')}</text>
                 </svg>
             `;
 
