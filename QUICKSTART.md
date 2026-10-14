@@ -72,7 +72,7 @@ curl "http://localhost:8080/api/generate?seed=Test&format=png" \
 ### Run Test Suite
 
 ```bash
-python3 test_api.py
+python3 tests/test_api.py
 ```
 
 This will:

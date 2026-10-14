@@ -62,10 +62,10 @@ RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf && \
     echo 'stderr_logfile=/var/log/supervisor/api.err.log' >> /etc/supervisor/conf.d/supervisord.conf
 
 RUN cp -r /app/* /usr/share/nginx/html/ && \
-    rm -rf /usr/share/nginx/html/api /usr/share/nginx/html/requirements.txt \
+    rm -rf /usr/share/nginx/html/api /usr/share/nginx/html/tests \
+           /usr/share/nginx/html/requirements.txt \
            /usr/share/nginx/html/Dockerfile /usr/share/nginx/html/.git* \
-           /usr/share/nginx/html/nginx.conf /usr/share/nginx/html/GEMINI.md \
-           /usr/share/nginx/html/test_api.py /usr/share/nginx/html/verify_parity.py \
+           /usr/share/nginx/html/nginx.conf \
            /usr/share/nginx/html/*.md /usr/share/nginx/html/llms.txt
 
 EXPOSE 80
