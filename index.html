@@ -1063,7 +1063,10 @@
             // PWA Service Worker Registration
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('Service Worker Registered', reg))
+                    .then(reg => {
+                        reg.update();
+                        console.log('Service Worker Registered', reg);
+                    })
                     .catch(err => console.error('Service Worker Registration Failed', err));
             }
         });

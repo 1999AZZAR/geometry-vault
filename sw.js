@@ -1,4 +1,4 @@
-const CACHE_NAME = 'geometry-vault-v1.7.1';
+const CACHE_NAME = 'geometry-vault-v1.8.0';
 const ASSETS = [
   '/',
   '/index.html',
@@ -13,9 +13,10 @@ const ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return cache.addAll(ASSETS).catch((err) => console.warn('Pre-cache warning:', err));
     })
   );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -26,9 +27,28 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
+  // Network-first for HTML and navigation
+  if (event.request.mode === 'navigate' || event.request.url.includes('/index.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((fetchResponse) => {
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, fetchResponse.clone());
+            return fetchResponse;
+          });
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Cache-first for other static assets
   event.respondWith(
     caches.match(event.request).then((response) => {
       return response || fetch(event.request).then((fetchResponse) => {
@@ -37,10 +57,6 @@ self.addEventListener('fetch', (event) => {
           return fetchResponse;
         });
       });
-    }).catch(() => {
-      if (event.request.mode === 'navigate') {
-        return caches.match('/index.html');
-      }
     })
   );
 });
