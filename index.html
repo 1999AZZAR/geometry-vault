@@ -94,7 +94,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;700&family=Noto+Serif+SC:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -159,6 +159,9 @@
             transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
             max-width: 90%;
             max-height: 90%;
+            object-fit: contain;
+            box-shadow: 0 6px 20px -8px rgba(42, 37, 32, 0.12);
+            background-color: #EFE9DC;
         }
 
         /* Matrix Control Styling */
@@ -306,7 +309,7 @@
         </div>
     </div>
 
-    <main class="max-w-[80rem] w-full max-w-[48rem] space-y-6 relative z-10 grid grid-cols-1 md:grid-cols-5 gap-6">
+    <main class="max-w-[80rem] w-full space-y-6 relative z-10 grid grid-cols-1 md:grid-cols-5 gap-6">
         
         <div class="surface-card w-full aspect-square md:aspect-auto md:h-full md:col-span-3 rounded-sm p-8 overflow-hidden relative group">
             <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTIyLCAxMTIsIDEwNCwgMC4xKSIvPjwvc3ZnPg==')] opacity-80 pointer-events-none"></div>
@@ -756,22 +759,73 @@
 
             const margin = Math.round(minDim * 0.024 * 100) / 100;
             const innerOffset = Math.round(minDim * 0.007 * 100) / 100;
+            const borderGap = innerOffset;
+            const strokeColor = "#2A2520";
+            const metaColor = "#7A7068";
+
+            // Harmonic Drafting Scale Bar (Bottom-Left)
+            const scaleFactor = minDim / 100;
+            const barW = Math.round((10.6 * scaleFactor) * 100) / 100;
+            const barH = Math.round((0.6 * scaleFactor) * 100) / 100;
+            const segW = Math.round((barW / 4) * 100) / 100;
+            const tickH = Math.round((0.5 * scaleFactor) * 100) / 100;
+            const scaleFontSize = Math.round((1.4 * scaleFactor) * 100) / 100;
+            const captionFontSize = Math.round((1.1 * scaleFactor) * 100) / 100;
+            const scaleBarX = Math.round((margin + borderGap + minDim * 0.02) * 100) / 100;
+            const scaleBarY = Math.round((viewH - margin - borderGap - barH - captionFontSize - minDim * 0.012) * 100) / 100;
+
+            // Archival Vermilion Seal Chop (几 何 典 藏) (Bottom-Right)
+            const sealSize = Math.round((Math.max(4.5, minDim * 0.064)) * 100) / 100;
+            const sealX = Math.round((viewW - margin - borderGap - sealSize - minDim * 0.02) * 100) / 100;
+            const sealY = Math.round((viewH - margin - borderGap - sealSize - minDim * 0.012) * 100) / 100;
+            const sealInset = Math.round((sealSize * 0.06) * 100) / 100;
+            const sealFontSize = Math.round((sealSize * 0.36) * 100) / 100;
+            const sealBorderWidth = Math.round((Math.max(0.18, sealSize * 0.05)) * 100) / 100;
+            const sealInnerWidth = Math.round((Math.max(0.08, sealSize * 0.02)) * 100) / 100;
 
             DOM.target.innerHTML = `
-                <svg viewBox="0 0 ${viewW} ${viewH}" style="aspect-ratio: ${ratio.w}/${ratio.h};" xmlns="http://www.w3.org/2000/svg" class="specimen-svg w-full h-full">
-                    <rect width="${viewW}" height="${viewH}" fill="transparent"></rect>
+                <svg viewBox="0 0 ${viewW} ${viewH}" style="aspect-ratio: ${ratio.w}/${ratio.h};" xmlns="http://www.w3.org/2000/svg" class="specimen-svg w-full h-full max-h-[470px] object-contain transition-all">
+                    <rect width="${viewW}" height="${viewH}" fill="#EFE9DC"></rect>
                     
                     <!-- Archival Drafting Borders (Swiss-Archival Standard) -->
-                    <rect x="${margin}" y="${margin}" width="${viewW - margin * 2}" height="${viewH - margin * 2}" fill="none" stroke="#2A2520" stroke-width="0.18" />
-                    <rect x="${margin + innerOffset}" y="${margin + innerOffset}" width="${viewW - (margin + innerOffset) * 2}" height="${viewH - (margin + innerOffset) * 2}" fill="none" stroke="#7A7068" stroke-width="0.08" />
+                    <rect x="${margin}" y="${margin}" width="${viewW - margin * 2}" height="${viewH - margin * 2}" fill="none" stroke="${strokeColor}" stroke-width="0.18" />
+                    <rect x="${margin + innerOffset}" y="${margin + innerOffset}" width="${viewW - (margin + innerOffset) * 2}" height="${viewH - (margin + innerOffset) * 2}" fill="none" stroke="${metaColor}" stroke-width="0.08" />
 
                     <g opacity="0.15">
-                        <circle cx="${cx}" cy="${cy}" r="${(minDim / 2) * 0.92}" fill="none" stroke="#7A7068" stroke-width="0.1" stroke-dasharray="0.2 1" />
-                        <line x1="${cx}" y1="1" x2="${cx}" y2="${viewH - 1}" stroke="#7A7068" stroke-width="0.1" stroke-dasharray="0.5 1.5" />
-                        <line x1="1" y1="${cy}" x2="${viewW - 1}" y2="${cy}" stroke="#7A7068" stroke-width="0.1" stroke-dasharray="0.5 1.5" />
+                        <circle cx="${cx}" cy="${cy}" r="${(minDim / 2) * 0.92}" fill="none" stroke="${metaColor}" stroke-width="0.1" stroke-dasharray="0.2 1" />
+                        <line x1="${cx}" y1="1" x2="${cx}" y2="${viewH - 1}" stroke="${metaColor}" stroke-width="0.1" stroke-dasharray="0.5 1.5" />
+                        <line x1="1" y1="${cy}" x2="${viewW - 1}" y2="${cy}" stroke="${metaColor}" stroke-width="0.1" stroke-dasharray="0.5 1.5" />
                     </g>
                     
                     <g>${geometryMarkup}</g>
+
+                    <!-- Harmonic Drafting Scale Bar (20mm Rule) -->
+                    <g class="drafting-scale-bar" transform="translate(${scaleBarX}, ${scaleBarY})">
+                        <rect x="0" y="0" width="${segW}" height="${barH}" fill="${strokeColor}" />
+                        <rect x="${segW}" y="0" width="${segW}" height="${barH}" fill="none" stroke="${strokeColor}" stroke-width="0.12" />
+                        <rect x="${segW * 2}" y="0" width="${segW}" height="${barH}" fill="${strokeColor}" />
+                        <rect x="${segW * 3}" y="0" width="${segW}" height="${barH}" fill="none" stroke="${strokeColor}" stroke-width="0.12" />
+                        <rect x="0" y="0" width="${barW}" height="${barH}" fill="none" stroke="${strokeColor}" stroke-width="0.12" />
+                        <line x1="0" y1="${-tickH}" x2="0" y2="0" stroke="${strokeColor}" stroke-width="0.12" />
+                        <line x1="${segW * 2}" y1="${-tickH}" x2="${segW * 2}" y2="0" stroke="${strokeColor}" stroke-width="0.12" />
+                        <line x1="${barW}" y1="${-tickH}" x2="${barW}" y2="0" stroke="${strokeColor}" stroke-width="0.12" />
+                        <text x="0" y="${-tickH - 0.3}" font-family="'JetBrains Mono', monospace" font-size="${scaleFontSize}" font-weight="600" fill="${strokeColor}" text-anchor="middle">0</text>
+                        <text x="${segW * 2}" y="${-tickH - 0.3}" font-family="'JetBrains Mono', monospace" font-size="${scaleFontSize}" font-weight="600" fill="${strokeColor}" text-anchor="middle">10</text>
+                        <text x="${barW}" y="${-tickH - 0.3}" font-family="'JetBrains Mono', monospace" font-size="${scaleFontSize}" font-weight="600" fill="${strokeColor}" text-anchor="middle">20mm</text>
+                        <text x="0" y="${barH + captionFontSize + 0.3}" font-family="'JetBrains Mono', monospace" font-size="${captionFontSize}" font-weight="500" fill="${metaColor}">HARMONIC SCALE 1:1</text>
+                    </g>
+
+                    <!-- Archival Vermilion Seal Chop (朱砂印章 · 几何典藏) -->
+                    <g class="archival-seal" transform="translate(${sealX}, ${sealY})">
+                        <rect width="${sealSize}" height="${sealSize}" fill="#B83227" fill-opacity="0.06" stroke="#B83227" stroke-width="${sealBorderWidth}" />
+                        <rect x="${sealInset}" y="${sealInset}" width="${sealSize - sealInset * 2}" height="${sealSize - sealInset * 2}" fill="none" stroke="#B83227" stroke-width="${sealInnerWidth}" />
+                        <line x1="${sealSize / 2}" y1="${sealInset}" x2="${sealSize / 2}" y2="${sealSize - sealInset}" stroke="#B83227" stroke-opacity="0.35" stroke-width="0.08" />
+                        <line x1="${sealInset}" y1="${sealSize / 2}" x2="${sealSize - sealInset}" y2="${sealSize / 2}" stroke="#B83227" stroke-opacity="0.35" stroke-width="0.08" />
+                        <text x="${sealSize * 0.28}" y="${sealSize * 0.38}" font-family="'Noto Serif SC', 'Source Han Serif', 'Songti SC', 'SimSun', serif" font-weight="bold" font-size="${sealFontSize}" fill="#B83227" text-anchor="middle">几</text>
+                        <text x="${sealSize * 0.72}" y="${sealSize * 0.38}" font-family="'Noto Serif SC', 'Source Han Serif', 'Songti SC', 'SimSun', serif" font-weight="bold" font-size="${sealFontSize}" fill="#B83227" text-anchor="middle">典</text>
+                        <text x="${sealSize * 0.28}" y="${sealSize * 0.80}" font-family="'Noto Serif SC', 'Source Han Serif', 'Songti SC', 'SimSun', serif" font-weight="bold" font-size="${sealFontSize}" fill="#B83227" text-anchor="middle">何</text>
+                        <text x="${sealSize * 0.72}" y="${sealSize * 0.80}" font-family="'Noto Serif SC', 'Source Han Serif', 'Songti SC', 'SimSun', serif" font-weight="bold" font-size="${sealFontSize}" fill="#B83227" text-anchor="middle">藏</text>
+                    </g>
                 </svg>
             `;
 
