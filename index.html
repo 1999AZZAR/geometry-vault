@@ -342,29 +342,96 @@
                         </div>
                     </div>
 
-                    <div class="relative group pt-2">
-                        <i class="fa-solid fa-terminal absolute left-4 top-1/2 -translate-y-1/2 text-[#7A7068] group-focus-within:text-[#8B1A1A] transition-colors mt-1"></i>
-                        <input type="text" id="seed-input" placeholder="Inject narrative sequence..." 
-                               class="w-full pl-10 pr-4 py-3 text-sm font-medium"
-                               autocomplete="off" maxlength="128" spellcheck="false">
+                    <div class="space-y-1.5 pt-1">
+                        <div class="flex justify-between items-center">
+                            <label class="font-tech text-[9px] text-[#7A7068]">NARRATIVE_INJECTION_SEED</label>
+                            <button id="random-btn" class="font-tech text-[9px] text-[#8B1A1A] hover:underline flex items-center gap-1 cursor-pointer">
+                                <i class="fa-solid fa-dice"></i> [ RANDOM NARRATIVE ]
+                            </button>
+                        </div>
+                        <div class="relative group">
+                            <i class="fa-solid fa-terminal absolute left-4 top-1/2 -translate-y-1/2 text-[#7A7068] group-focus-within:text-[#8B1A1A] transition-colors mt-0.5"></i>
+                            <input type="text" id="seed-input" placeholder="Inject narrative sequence..." 
+                                   class="w-full pl-10 pr-4 py-2.5 text-xs font-mono font-medium rounded-sm"
+                                   autocomplete="off" maxlength="128" spellcheck="false">
+                        </div>
                     </div>
 
-                    <div class="relative group">
-                        <i class="fa-solid fa-fingerprint absolute left-4 top-1/2 -translate-y-1/2 text-[#7A7068] group-focus-within:text-[#8B1A1A] transition-colors"></i>
-                        <input type="text" id="id-load-input" placeholder="Recover from ID (e.g. 83-XHVBYJ)..." 
-                               class="w-full pl-10 pr-4 py-3 text-sm font-medium"
-                               autocomplete="off" maxlength="10" spellcheck="false">
+                    <div class="space-y-1.5">
+                        <label class="font-tech text-[9px] text-[#7A7068]">RECOVER_FROM_ID</label>
+                        <div class="relative group">
+                            <i class="fa-solid fa-fingerprint absolute left-4 top-1/2 -translate-y-1/2 text-[#7A7068] group-focus-within:text-[#8B1A1A] transition-colors"></i>
+                            <input type="text" id="id-load-input" placeholder="Recover from ID (e.g. 83-XHVBYJ)..." 
+                                   class="w-full pl-10 pr-4 py-2.5 text-xs font-mono font-medium rounded-sm"
+                                   autocomplete="off" maxlength="10" spellcheck="false">
+                        </div>
                     </div>
 
-                    <div class="relative group">
-                        <i class="fa-solid fa-palette absolute left-4 top-1/2 -translate-y-1/2 text-[#7A7068] group-focus-within:text-[#8B1A1A] transition-colors"></i>
-                        <input type="text" id="color-input" placeholder="Hex Palette..." 
-                               class="w-full pl-10 pr-4 py-3 text-sm font-medium"
-                               autocomplete="off" spellcheck="false"
-                               value="#8B1A1A, #2A2520, #7A7068, #E8E0D0">
+                    <div class="space-y-1.5">
+                        <label class="font-tech text-[9px] text-[#7A7068]">ARCHIVAL_PALETTE</label>
+                        <div class="relative group">
+                            <i class="fa-solid fa-palette absolute left-4 top-1/2 -translate-y-1/2 text-[#7A7068] group-focus-within:text-[#8B1A1A] transition-colors"></i>
+                            <input type="text" id="color-input" placeholder="Hex Palette..." 
+                                   class="w-full pl-10 pr-4 py-2 text-xs font-mono font-medium rounded-sm"
+                                   autocomplete="off" spellcheck="false"
+                                   value="#8B1A1A, #2A2520, #7A7068, #E8E0D0">
+                        </div>
                     </div>
-                </div>
-            </div>
+
+                    <!-- Morphological Telemetry Matrix / Info Card -->
+                    <div class="space-y-2 border border-[#DDD5C5] bg-[#E8E0D0] p-3 rounded-sm">
+                        <div class="flex justify-between items-center border-b border-[#DDD5C5] pb-1.5">
+                            <span class="font-tech text-[9px] font-bold text-[#2A2520]">03 // GEOMETRIC_TELEMETRY</span>
+                            <span id="accession-badge" class="font-tech text-[8px] text-[#8B1A1A] font-semibold">SEQ: 00-000000</span>
+                        </div>
+
+                        <!-- Highlighted Derived Order from Narrative -->
+                        <div class="border-b border-[#DDD5C5] pb-2 pt-0.5">
+                            <div class="flex justify-between items-center text-[9px] font-tech">
+                                <span class="text-[#7A7068] text-[8px] uppercase tracking-wider">DERIVED GEOMETRIC ORDER</span>
+                                <span class="text-[#7A7068] text-[7px] font-mono">NARRATIVE &rarr; SEED &rarr; ID &rarr; ORDER</span>
+                            </div>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <i class="fa-solid fa-cubes text-[#8B1A1A] text-[10px]"></i>
+                                <span id="tel-order" class="text-xs font-serif italic font-bold text-[#2A2520] tracking-wide">6-Fold Harmonic Matrix</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[9px] font-tech pt-1">
+                            <div>
+                                <span class="text-[#7A7068] block text-[8px]">CORE SYMMETRY</span>
+                                <span id="tel-symmetry" class="text-[#2A2520] font-semibold">6-Fold</span>
+                            </div>
+                            <div>
+                                <span class="text-[#7A7068] block text-[8px]">LAYER DEPTH</span>
+                                <span id="tel-depth" class="text-[#2A2520] font-semibold">7 Strata</span>
+                            </div>
+                            <div>
+                                <span class="text-[#7A7068] block text-[8px]">SUB-HARMONIC</span>
+                                <span id="tel-subharmonic" class="text-[#2A2520] font-semibold">5-Fold Modulation</span>
+                            </div>
+                            <div>
+                                <span class="text-[#7A7068] block text-[8px]">ORBITAL SATELLITES</span>
+                                <span id="tel-satellites" class="text-[#2A2520] font-semibold">4 Nodes</span>
+                            </div>
+                            <div>
+                                <span class="text-[#7A7068] block text-[8px]">ROTATION DELTA</span>
+                                <span id="tel-rotation" class="text-[#2A2520] font-semibold">22.5&deg; / Layer</span>
+                            </div>
+                            <div>
+                                <span class="text-[#7A7068] block text-[8px]">STROKE PROFILE</span>
+                                <span id="tel-stroke" class="text-[#2A2520] font-semibold">0.08 - 0.25 pt</span>
+                            </div>
+                            <div>
+                                <span class="text-[#7A7068] block text-[8px]">PALETTE RATIO</span>
+                                <span id="tel-palette" class="text-[#2A2520] font-semibold">4 Tones</span>
+                            </div>
+                            <div>
+                                <span class="text-[#7A7068] block text-[8px]">PTR HASH / METRIC</span>
+                                <span id="tel-hash" class="text-[#2A2520] font-semibold">0x00000000</span>
+                            </div>
+                        </div>
+                    </div>
 
             <footer class="space-y-4 pt-4 border-t border-[#DDD5C5]">
                 <div class="flex justify-between items-center bg-[#E8E0D0] px-3 py-2 border border-[#DDD5C5]">
@@ -437,6 +504,17 @@
             copyBtn: document.getElementById('copy-btn'),
             pngBtn: document.getElementById('png-btn'),
             embedBtn: document.getElementById('embed-btn'),
+            randomBtn: document.getElementById('random-btn'),
+            accessionBadge: document.getElementById('accession-badge'),
+            telOrder: document.getElementById('tel-order'),
+            telSymmetry: document.getElementById('tel-symmetry'),
+            telDepth: document.getElementById('tel-depth'),
+            telSubharmonic: document.getElementById('tel-subharmonic'),
+            telSatellites: document.getElementById('tel-satellites'),
+            telRotation: document.getElementById('tel-rotation'),
+            telStroke: document.getElementById('tel-stroke'),
+            telPalette: document.getElementById('tel-palette'),
+            telHash: document.getElementById('tel-hash'),
             ratioBtns: document.querySelectorAll('.ratio-btn')
         };
 
@@ -696,6 +774,26 @@
             DOM.hashMetric.textContent = `PTR: 0x${hash.toString(16).toUpperCase().padStart(8, '0')}`;
             DOM.specimenId.textContent = `SEQ: ${identifier}`;
 
+            // Update Morphological Telemetry Matrix / Info Card
+            const subSymmetry = ((hash >> 4) % 12) + 3;
+            const orbitCount = (hash % 4) + 2;
+            const rotationStep = 22.5;
+            const strokeRange = `0.08 - ${(0.25).toFixed(2)} pt`;
+            const paletteCount = `${activePalette.length} Tone${activePalette.length > 1 ? 's' : ''}`;
+            const hashHex = `0x${hash.toString(16).toUpperCase().padStart(8, '0')}`;
+            const orderName = `${coreSymmetry}-Fold Harmonic Matrix`;
+
+            if (DOM.accessionBadge) DOM.accessionBadge.textContent = `SEQ: ${identifier}`;
+            if (DOM.telOrder) DOM.telOrder.textContent = orderName;
+            if (DOM.telSymmetry) DOM.telSymmetry.textContent = `${coreSymmetry}-Fold`;
+            if (DOM.telDepth) DOM.telDepth.textContent = `${CONFIG.maxLayers} Strata`;
+            if (DOM.telSubharmonic) DOM.telSubharmonic.textContent = `${subSymmetry}-Fold Modulation`;
+            if (DOM.telSatellites) DOM.telSatellites.textContent = `${orbitCount} Nodes`;
+            if (DOM.telRotation) DOM.telRotation.innerHTML = `${rotationStep}&deg; / Layer`;
+            if (DOM.telStroke) DOM.telStroke.textContent = strokeRange;
+            if (DOM.telPalette) DOM.telPalette.textContent = paletteCount;
+            if (DOM.telHash) DOM.telHash.textContent = hashHex;
+
             // Sync URL if not in embed mode
             if (document.body.dataset.mode !== 'embed') {
                 const url = new URL(window.location);
@@ -898,6 +996,33 @@
                 renderSynthesisPipeline();
             });
         });
+
+        const NARRATIVE_TOPICS = [
+            "Harmonic Proportions of the Golden Ratio",
+            "Non-Euclidean Geometries in Sacred Architecture",
+            "Tessellations and Quasi-Crystalline Symmetries",
+            "Hyperbolic Tilings of the Poincare Disk",
+            "Differential Topology and Riemannian Manifolds",
+            "Fibonacci Spirals in Natural Formations",
+            "Fractal Dimension and Iterative Function Systems",
+            "The Algorithmic Beauty of Islamic Girih Tiles",
+            "Platonic Polyhedra and Spherical Trigonometry",
+            "Stereographic Projections of Four-Dimensional Polytope",
+            "Parametric Curves and Spline Interpolations",
+            "Minimal Surfaces and Catenoid Transformations",
+            "Voronoi Diagrams and Delaunay Triangulations",
+            "Kinetic Origami and Fold Geometry Dynamics",
+            "Brutalist Structural Modular Formations"
+        ];
+
+        if (DOM.randomBtn) {
+            DOM.randomBtn.addEventListener('click', () => {
+                const topic = NARRATIVE_TOPICS[Math.floor(Math.random() * NARRATIVE_TOPICS.length)];
+                DOM.seedInput.value = topic;
+                DOM.idLoadInput.value = "";
+                renderSynthesisPipeline();
+            });
+        }
 
         DOM.seedInput.addEventListener('input', renderDebounced);
         DOM.idLoadInput.addEventListener('input', renderDebounced);

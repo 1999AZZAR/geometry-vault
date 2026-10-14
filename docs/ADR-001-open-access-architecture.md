@@ -52,11 +52,11 @@ Geometry Vault is a procedural geometry synthesis engine designed as an embeddab
 
 | Risk | Mitigation | Status |
 |------|-----------|--------|
-| API abuse/DDoS | Rate limiting (20 req/min generation) | ✅ Implemented |
-| Resource exhaustion | PNG scale limits (800-4800px), SVG only by default | ✅ Implemented |
-| Spam/malicious content | Input validation (max 128 chars seed, hex color regex) | ✅ Implemented |
-| Cost explosion | Nginx proxy cache (24h), LRU memory cache (1024 entries) | ✅ Implemented |
-| Attribution loss | Sequence ID & hash in SVG metadata | ✅ Implemented |
+| API abuse/DDoS | Rate limiting (20 req/min generation) | [OK] Implemented |
+| Resource exhaustion | PNG scale limits (800-4800px), SVG only by default | [OK] Implemented |
+| Spam/malicious content | Input validation (max 128 chars seed, hex color regex) | [OK] Implemented |
+| Cost explosion | Nginx proxy cache (24h), LRU memory cache (1024 entries) | [OK] Implemented |
+| Attribution loss | Sequence ID & hash in SVG metadata | [OK] Implemented |
 
 ## Alternatives Considered
 

@@ -3,35 +3,35 @@
 **Philosophy:** Maximum security without tracking or monitoring.
 **Last Updated:** 2026-05-02
 
-## Current Protection Mechanisms ✅
+## Current Protection Mechanisms [OK]
 
 ### 1. Input Validation
 - **Seed:** Max 128 characters, regex sanitized `[^a-zA-Z0-9\s-_.,]`
 - **Colors:** Hex regex `^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$`, max 256 chars
 - **Ratios:** Bounded 1-16 for width/height
 - **Scale:** Bounded 800-4800 pixels for PNG
-- **ReDoS Protection:** Regex tested safe (0.018s for 1M characters) ✓
+- **ReDoS Protection:** Regex tested safe (0.018s for 1M characters) [OK]
 
 ### 2. Computation Limits
-- **Loop Bounds:** MAX_LAYERS=7, BASE_RESOLUTION=240 (fixed) ✓
-- **Geometry Complexity:** Deterministic, no user-controlled recursion ✓
-- **Path Points:** Fixed 240 points per layer maximum ✓
+- **Loop Bounds:** MAX_LAYERS=7, BASE_RESOLUTION=240 (fixed) [OK]
+- **Geometry Complexity:** Deterministic, no user-controlled recursion [OK]
+- **Path Points:** Fixed 240 points per layer maximum [OK]
 
 ### 3. Rate Limiting
 - **Generation:** 20 requests/minute per IP (SlowAPI)
 - **Preview/Health:** 30 requests/minute per IP
-- **Headers:** No tracking, ephemeral IP-based ✓
+- **Headers:** No tracking, ephemeral IP-based [OK]
 
 ### 4. Caching
-- **LRU Cache:** 1024 entries in-memory, prevents redundant computation ✓
-- **Nginx Proxy:** 24h cache, reduces backend load ✓
-- **Request Body:** 10M limit (nginx `client_max_body_size`) ✓
+- **LRU Cache:** 1024 entries in-memory, prevents redundant computation [OK]
+- **Nginx Proxy:** 24h cache, reduces backend load [OK]
+- **Request Body:** 10M limit (nginx `client_max_body_size`) [OK]
 
 ---
 
 ## Critical Hardening Gaps
 
-### 1. API Request Timeout ⚠️
+### 1. API Request Timeout [WARN]️
 **Issue:** No timeout on `/api/generate` endpoint
 - Long-running PNG conversions can block workers
 - CairoSVG/Pillow operations unbounded
@@ -64,7 +64,7 @@ async def generate_geometry_post(request: Request, response: Response, body: Gen
 **Priority:** HIGH
 **Impact:** Prevents worker exhaustion from slow requests
 
-### 2. Nginx Rate Limit Zone ⚠️
+### 2. Nginx Rate Limit Zone [WARN]️
 **Issue:** Rate limiting only in application layer (SlowAPI)
 - Doesn't protect against connection floods
 - Application must process every request before rate limiting
@@ -100,7 +100,7 @@ http {
 **Priority:** HIGH
 **Impact:** Protects before requests reach application
 
-### 3. Worker Resource Limits ⚠️
+### 3. Worker Resource Limits [WARN]️
 **Issue:** Uvicorn workers have no memory/CPU caps
 - Single malicious request can consume all memory
 - No automatic restart on resource exhaustion
@@ -132,7 +132,7 @@ services:
 **Priority:** MEDIUM
 **Impact:** Prevents single request from killing service
 
-### 4. SVG Output Size Cap ⚠️
+### 4. SVG Output Size Cap [WARN]️
 **Issue:** Generated SVG size not validated
 - Large aspect ratios (16:1) with max scale could produce huge SVGs
 - No check on final SVG string length
@@ -155,7 +155,7 @@ def render_svg(seed, colors, ratio_w, ratio_h):
 **Priority:** LOW
 **Impact:** Prevents memory exhaustion on huge outputs
 
-### 5. Nginx Connection Timeout ⚠️
+### 5. Nginx Connection Timeout [WARN]️
 **Issue:** Default timeouts may be too long
 - Slow clients can hold connections open
 - Proxy timeouts should match backend
@@ -255,8 +255,8 @@ if __name__ == "__main__":
 ```python
 # api/geometry.py
 class GeometryGenerator:
-    MAX_LAYERS = 7  # Already enforced ✓
-    BASE_RESOLUTION = 240  # Already enforced ✓
+    MAX_LAYERS = 7  # Already enforced [OK]
+    BASE_RESOLUTION = 240  # Already enforced [OK]
     MAX_SVG_SIZE = 1024 * 1024  # Add this
     MAX_SEED_LENGTH = 128  # Add validation
     MAX_COLORS = 10  # Limit palette size
@@ -343,22 +343,22 @@ deploy:
 ## Implementation Priority
 
 ### Phase 1: Critical (This Week)
-1. ✅ Add nginx rate limit zones
-2. ✅ Add API request timeouts
-3. ✅ Add nginx connection limits
-4. ✅ Configure worker resource limits
+1. [OK] Add nginx rate limit zones
+2. [OK] Add API request timeouts
+3. [OK] Add nginx connection limits
+4. [OK] Configure worker resource limits
 
 ### Phase 2: Important (This Month)
-5. ✅ Add SVG output size validation
-6. ✅ Implement timeout middleware
-7. ✅ Add Docker HEALTHCHECK
-8. ✅ Configure nginx timeouts
+5. [OK] Add SVG output size validation
+6. [OK] Implement timeout middleware
+7. [OK] Add Docker HEALTHCHECK
+8. [OK] Configure nginx timeouts
 
 ### Phase 3: Hardening (This Quarter)
-9. ✅ Switch to non-root Docker user
-10. ✅ Add Permissions-Policy header
-11. ✅ Implement worker auto-restart
-12. ✅ Add request size middleware
+9. [OK] Switch to non-root Docker user
+10. [OK] Add Permissions-Policy header
+11. [OK] Implement worker auto-restart
+12. [OK] Add request size middleware
 
 ---
 
@@ -392,13 +392,13 @@ for i in {1..15}; do (curl -s http://localhost:8080/api/preview?seed=test &) don
 ## Privacy Compliance
 
 **No Tracking Mechanisms:**
-- ❌ No persistent IP logging
-- ❌ No user sessions
-- ❌ No analytics/metrics collection
-- ❌ No cookie usage
-- ✅ Ephemeral rate limit state only
-- ✅ No PII collection
-- ✅ Fully compliant with GDPR/CCPA without implementation
+- [FAIL] No persistent IP logging
+- [FAIL] No user sessions
+- [FAIL] No analytics/metrics collection
+- [FAIL] No cookie usage
+- [OK] Ephemeral rate limit state only
+- [OK] No PII collection
+- [OK] Fully compliant with GDPR/CCPA without implementation
 
 **Rate Limiting Without Surveillance:**
 - Uses `$binary_remote_addr` (hashed IP, ephemeral)
