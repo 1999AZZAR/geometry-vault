@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            try {
+                var params = new URLSearchParams(window.location.search);
+                if (params.get('mode') === 'embed') {
+                    document.documentElement.dataset.mode = 'embed';
+                }
+            } catch(e) {}
+        })();
+    </script>
     <meta name="description" content="Geometry Vault: Digital archive and archival specimen vault of Azzar Budiyanto. A high-end specimen vault for archival synthesis.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://geometry-vault.glassgallery.my.id/">
@@ -236,43 +246,122 @@
         }
 
         /* Embed Mode */
+        html[data-mode="embed"],
         body[data-mode="embed"] { 
-            background-color: #F7F3EB;
-            padding: 0; 
-            display: block;
-            overflow: hidden;
+            background-color: #EFE9DC !important;
+            padding: 0 !important; 
+            margin: 0 !important;
+            display: block !important;
+            overflow: hidden !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
         }
-        
+        html[data-mode="embed"] .noise-layer,
+        body[data-mode="embed"] .noise-layer {
+            display: block !important;
+            opacity: 0.04 !important;
+            pointer-events: none !important;
+        }
+        html[data-mode="embed"] *,
+        body[data-mode="embed"] * {
+            cursor: auto !important;
+        }
+        html[data-mode="embed"] .custom-cursor,
+        html[data-mode="embed"] .custom-cursor-trail,
+        html[data-mode="embed"] #fullscreen-viewer,
+        html[data-mode="embed"] #fullscreen-btn,
+        html[data-mode="embed"] header,
+        html[data-mode="embed"] footer,
+        html[data-mode="embed"] section,
+        html[data-mode="embed"] #specimen-metadata,
+        html[data-mode="embed"] .absolute.inset-0,
+        html[data-mode="embed"] main > *:not(#specimen-viewport-card),
+        html[data-mode="embed"] .surface-card:not(#specimen-viewport-card),
+        body[data-mode="embed"] .custom-cursor,
+        body[data-mode="embed"] .custom-cursor-trail,
         body[data-mode="embed"] #fullscreen-viewer,
-        body[data-mode="embed"] #fullscreen-btn {
+        body[data-mode="embed"] #fullscreen-btn,
+        body[data-mode="embed"] header,
+        body[data-mode="embed"] footer,
+        body[data-mode="embed"] section,
+        body[data-mode="embed"] #specimen-metadata,
+        body[data-mode="embed"] .absolute.inset-0,
+        body[data-mode="embed"] main > *:not(#specimen-viewport-card),
+        body[data-mode="embed"] .surface-card:not(#specimen-viewport-card) {
             display: none !important;
         }
+        html[data-mode="embed"] main,
         body[data-mode="embed"] main { 
-            max-width: none; 
-            width: 100vw; 
-            height: 100vh; 
-            margin: 0; 
-            display: block;
-            gap: 0;
-            space-y: 0;
+            max-width: none !important; 
+            width: 100vw !important; 
+            height: 100vh !important; 
+            margin: 0 !important; 
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            grid-template-columns: none !important;
+            gap: 0 !important;
+            space-y: 0 !important;
+            overflow: hidden !important;
+            position: relative !important;
         }
-        body[data-mode="embed"] section,
-        body[data-mode="embed"] #specimen-metadata { 
-            display: none !important; 
+        html[data-mode="embed"] #specimen-viewport-card,
+        body[data-mode="embed"] #specimen-viewport-card { 
+            border: none !important; 
+            box-shadow: none !important; 
+            background: transparent !important; 
+            width: 100vw !important; 
+            height: 100vh !important; 
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            padding: 0 !important; 
+            margin: 0 !important;
+            border-radius: 0 !important;
+            aspect-ratio: auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            position: relative !important;
+            overflow: hidden !important;
         }
-        body[data-mode="embed"] .surface-card { 
-            border: none; 
-            box-shadow: none; 
-            background: transparent; 
-            height: 100%; 
-            width: 100%;
-            padding: 0;
-            border-radius: 0;
+        html[data-mode="embed"] #render-target,
+        body[data-mode="embed"] #render-target {
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 0 !important;
+            box-sizing: border-box !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
-        body[data-mode="embed"] .absolute { display: none; }
+        html[data-mode="embed"] #render-target svg,
+        body[data-mode="embed"] #render-target svg,
+        html[data-mode="embed"] .specimen-svg,
+        body[data-mode="embed"] .specimen-svg {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            box-shadow: none !important;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
+    <script>
+        (function() {
+            try {
+                var params = new URLSearchParams(window.location.search);
+                if (params.get('mode') === 'embed') {
+                    document.body.dataset.mode = 'embed';
+                }
+            } catch(e) {}
+        })();
+    </script>
 
     <svg class="noise-layer" aria-hidden="true">
         <filter id="fractalNoise">
@@ -311,7 +400,7 @@
 
     <main class="max-w-[80rem] w-full space-y-6 relative z-10 grid grid-cols-1 md:grid-cols-5 gap-6">
         
-        <div class="surface-card w-full aspect-square md:aspect-auto md:h-full md:col-span-3 rounded-sm p-8 overflow-hidden relative group">
+        <div id="specimen-viewport-card" class="surface-card w-full aspect-square md:aspect-auto md:h-full md:col-span-3 rounded-sm p-8 overflow-hidden relative group">
             <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMTIyLCAxMTIsIDEwNCwgMC4xKSIvPjwvc3ZnPg==')] opacity-80 pointer-events-none"></div>
             <button id="fullscreen-btn" class="absolute top-4 right-4 font-tech text-[10px] text-[#2A2520] hover:text-[#8B1A1A] flex items-center justify-center gap-2 px-3 py-2 border border-[#DDD5C5] hover:border-[#8B1A1A] bg-[#EFE9DC] z-10">
                 <i class="fa-solid fa-expand"></i> [ EXPAND ]
@@ -660,16 +749,24 @@
             const params = new URLSearchParams(window.location.search);
             
             if (params.get('mode') === 'embed') {
+                document.documentElement.dataset.mode = 'embed';
                 document.body.dataset.mode = 'embed';
             }
 
-            if (params.get('seed')) DOM.seedInput.value = params.get('seed');
-            if (params.get('id')) DOM.idLoadInput.value = params.get('id');
-            if (params.get('colors')) DOM.colorInput.value = params.get('colors');
+            const seedVal = params.get('narrative') || params.get('seed') || params.get('s');
+            if (seedVal) DOM.seedInput.value = seedVal;
+            if (params.get('id')) {
+                DOM.idLoadInput.value = params.get('id');
+                DOM.seedInput.value = '';
+            }
+            const colorVal = params.get('colors') || params.get('palette') || params.get('pigment');
+            if (colorVal) DOM.colorInput.value = colorVal;
             
             if (params.get('w') && params.get('h')) {
+                const pw = params.get('w');
+                const ph = params.get('h');
                 DOM.ratioBtns.forEach(btn => {
-                    if (btn.dataset.w === params.get('w') && btn.dataset.h === params.get('h')) {
+                    if (btn.dataset.w === pw && btn.dataset.h === ph) {
                         DOM.ratioBtns.forEach(b => b.removeAttribute('data-active'));
                         btn.setAttribute('data-active', 'true');
                     }
@@ -678,16 +775,17 @@
 
             // postMessage interface
             window.addEventListener('message', (e) => {
+                if (!e.data || typeof e.data !== 'object') return;
                 const { type, data } = e.data;
-                if (type === 'UPDATE_SPECIMEN') {
-                    if (data.seed) {
-                        DOM.seedInput.value = data.seed;
+                if (type === 'UPDATE_SPECIMEN' && data) {
+                    if (data.seed || data.narrative) {
+                        DOM.seedInput.value = data.seed || data.narrative;
                         DOM.idLoadInput.value = "";
                     } else if (data.id) {
                         DOM.idLoadInput.value = data.id;
                         DOM.seedInput.value = "";
                     }
-                    if (data.colors) DOM.colorInput.value = data.colors;
+                    if (data.colors || data.palette) DOM.colorInput.value = data.colors || data.palette;
                     if (data.w && data.h) {
                         DOM.ratioBtns.forEach(btn => {
                             if (btn.dataset.w == data.w && btn.dataset.h == data.h) {
@@ -783,8 +881,29 @@
             const sealBorderWidth = Math.round((Math.max(0.18, sealSize * 0.05)) * 100) / 100;
             const sealInnerWidth = Math.round((Math.max(0.08, sealSize * 0.02)) * 100) / 100;
 
+            // Procedural Latin Binomial Designation (Bottom-Center)
+            const symmetryNames = {
+                2: "Bilateralis",
+                3: "Trigonalis",
+                4: "Tetragonalis",
+                5: "Pentagonalis",
+                6: "Hexagonalis",
+                7: "Heptagonalis",
+                8: "Octagonalis",
+                9: "Enneagonalis",
+                10: "Decagonalis"
+            };
+            const latinPrefix = ["Harmonia", "Symmetria", "Curvatura", "Morfosis", "Polygonia", "Planaria"][(hash >> 2) % 6];
+            const latinSuffix = symmetryNames[coreSymmetry] || "Harmonica";
+            const latinTitle = `${latinPrefix} ${latinSuffix}.`;
+
+            const isEmbed = document.body.dataset.mode === 'embed' || document.documentElement.dataset.mode === 'embed';
+            const svgClass = isEmbed 
+                ? "specimen-svg w-full h-full max-w-full max-h-full object-contain" 
+                : "specimen-svg w-full h-full max-h-[470px] object-contain transition-all";
+
             DOM.target.innerHTML = `
-                <svg viewBox="0 0 ${viewW} ${viewH}" style="aspect-ratio: ${ratio.w}/${ratio.h};" xmlns="http://www.w3.org/2000/svg" class="specimen-svg w-full h-full max-h-[470px] object-contain transition-all">
+                <svg viewBox="0 0 ${viewW} ${viewH}" style="aspect-ratio: ${ratio.w}/${ratio.h};" xmlns="http://www.w3.org/2000/svg" class="${svgClass}">
                     <rect width="${viewW}" height="${viewH}" fill="#EFE9DC"></rect>
                     
                     <!-- Archival Drafting Borders (Swiss-Archival Standard) -->
@@ -814,6 +933,9 @@
                         <text x="${barW}" y="${-tickH - 0.3}" font-family="'JetBrains Mono', monospace" font-size="${scaleFontSize}" font-weight="600" fill="${strokeColor}" text-anchor="middle">20mm</text>
                         <text x="0" y="${barH + captionFontSize + 0.3}" font-family="'JetBrains Mono', monospace" font-size="${captionFontSize}" font-weight="500" fill="${metaColor}">HARMONIC SCALE 1:1</text>
                     </g>
+
+                    <!-- Procedural Latin Binomial Designation (Hershey Cursive Style) -->
+                    <text x="${cx}" y="${sealY + sealSize * 0.65}" font-family="'Noto Serif', 'Playfair Display', Georgia, serif" font-style="italic" font-size="${captionFontSize * 1.35}" fill="${strokeColor}" text-anchor="middle">${latinTitle}</text>
 
                     <!-- Archival Vermilion Seal Chop (朱砂印章 · 几何典藏) -->
                     <g class="archival-seal" transform="translate(${sealX}, ${sealY})">
