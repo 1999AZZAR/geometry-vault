@@ -1,3 +1,12 @@
+> [!IMPORTANT]
+> **Production Deployment Moved to `bakso` (`100.122.202.31`)**
+> This vault is served in production by Caddy on `hostdata-bakso` (not Docker on `servy`).
+> To deploy local edits to production, simply run:
+> ```bash
+> ./deploy.sh
+> ```
+> For full multi-vault architecture and port routing, see [VAULTS_DEPLOYMENT.md](../VAULTS_DEPLOYMENT.md).
+
 # Geometry Vault: Specimen Vault
 
 The Geometry Vault Specimen Vault is a high-end digital synthesis engine and archival repository designed for technical minimalism and structural honesty. It facilitates the generation, visualization, and preservation of procedural geometry specimens based on narrative input sequences.

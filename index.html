@@ -585,6 +585,8 @@
         </footer>
     </main>
 
+    <!-- Core Engine Scripts -->
+    <script src="js/generational-cache.js?v=1.0.0"></script>
     <script>
         const DOM = {
             target: document.getElementById('render-target'),
@@ -815,7 +817,24 @@
             }
         };
 
-        const renderSynthesisPipeline = () => {
+        function applyGeometryTelemetry(meta, isCached) {
+            const cacheTag = isCached ? ' [GEN_CACHE]' : '';
+            DOM.hashMetric.textContent = `PTR: ${meta.hashHex}${cacheTag}`;
+            DOM.specimenId.textContent = `SEQ: ${meta.identifier}`;
+            if (DOM.accessionBadge) DOM.accessionBadge.textContent = `SEQ: ${meta.identifier}`;
+            if (DOM.telOrder) DOM.telOrder.textContent = meta.orderName;
+            if (DOM.telSymmetry) DOM.telSymmetry.textContent = `${meta.coreSymmetry}-Fold`;
+            if (DOM.telDepth) DOM.telDepth.textContent = `${CONFIG.maxLayers} Strata`;
+            if (DOM.telSubharmonic) DOM.telSubharmonic.textContent = `${meta.subSymmetry}-Fold Modulation`;
+            if (DOM.telSatellites) DOM.telSatellites.textContent = `${meta.orbitCount} Nodes`;
+            if (DOM.telRotation) DOM.telRotation.innerHTML = `${meta.rotationStep}&deg; / Layer`;
+            if (DOM.telStroke) DOM.telStroke.textContent = meta.strokeRange;
+            if (DOM.telPalette) DOM.telPalette.textContent = meta.paletteCount;
+            if (DOM.telHash) DOM.telHash.textContent = meta.hashHex;
+        }
+
+        const renderSynthesisPipeline = async () => {
+            const t0 = performance.now();
             let hash;
             let rawSeed = DOM.seedInput.value;
             const idLoadValue = DOM.idLoadInput.value.trim();
@@ -846,6 +865,19 @@
                 viewH = Math.round((100 * (ratio.h / ratio.w)) * 100) / 100;
             } else if (ratio.h > ratio.w) {
                 viewW = Math.round((100 * (ratio.w / ratio.h)) * 100) / 100;
+            }
+
+            const cacheKey = typeof GenerationalCache !== 'undefined'
+                ? GenerationalCache.makeKey('GV', String(hash), ratio.w, ratio.h, rawPalette, 'static')
+                : null;
+
+            if (cacheKey) {
+                const cached = await GenerationalCache.get(cacheKey);
+                if (cached && cached.svg && cached.meta) {
+                    DOM.target.innerHTML = cached.svg;
+                    applyGeometryTelemetry(cached.meta, true);
+                    return;
+                }
             }
 
             const cx = Math.round((viewW / 2) * 100) / 100;
@@ -951,10 +983,6 @@
                 </svg>
             `;
 
-            DOM.hashMetric.textContent = `PTR: 0x${hash.toString(16).toUpperCase().padStart(8, '0')}`;
-            DOM.specimenId.textContent = `SEQ: ${identifier}`;
-
-            // Update Morphological Telemetry Matrix / Info Card
             const subSymmetry = ((hash >> 4) % 12) + 3;
             const orbitCount = (hash % 4) + 2;
             const rotationStep = 22.5;
@@ -963,16 +991,26 @@
             const hashHex = `0x${hash.toString(16).toUpperCase().padStart(8, '0')}`;
             const orderName = `${coreSymmetry}-Fold Harmonic Matrix`;
 
-            if (DOM.accessionBadge) DOM.accessionBadge.textContent = `SEQ: ${identifier}`;
-            if (DOM.telOrder) DOM.telOrder.textContent = orderName;
-            if (DOM.telSymmetry) DOM.telSymmetry.textContent = `${coreSymmetry}-Fold`;
-            if (DOM.telDepth) DOM.telDepth.textContent = `${CONFIG.maxLayers} Strata`;
-            if (DOM.telSubharmonic) DOM.telSubharmonic.textContent = `${subSymmetry}-Fold Modulation`;
-            if (DOM.telSatellites) DOM.telSatellites.textContent = `${orbitCount} Nodes`;
-            if (DOM.telRotation) DOM.telRotation.innerHTML = `${rotationStep}&deg; / Layer`;
-            if (DOM.telStroke) DOM.telStroke.textContent = strokeRange;
-            if (DOM.telPalette) DOM.telPalette.textContent = paletteCount;
-            if (DOM.telHash) DOM.telHash.textContent = hashHex;
+            const meta = {
+                hashHex: hashHex,
+                identifier: identifier,
+                orderName: orderName,
+                coreSymmetry: coreSymmetry,
+                subSymmetry: subSymmetry,
+                orbitCount: orbitCount,
+                rotationStep: rotationStep,
+                strokeRange: strokeRange,
+                paletteCount: paletteCount
+            };
+
+            if (cacheKey && typeof GenerationalCache !== 'undefined') {
+                GenerationalCache.set(cacheKey, {
+                    svg: DOM.target.innerHTML,
+                    meta: meta
+                });
+            }
+
+            applyGeometryTelemetry(meta, false);
 
             // Sync URL if not in embed mode
             if (document.body.dataset.mode !== 'embed') {
